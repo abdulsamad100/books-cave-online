@@ -1,0 +1,104 @@
+import React, { useContext, useEffect, useState } from "react";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import { AuthContext } from "../context/AuthContext";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../JS Files/Firebase";
+import Card from "./Card";
+
+const Dashboard = () => {
+  const { signin, isLoading: authLoading } = useContext(AuthContext);
+  const [firebaseData, setFirebaseData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(
+      collection(db, "books"),
+      (querySnapshot) => {
+        const books = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setFirebaseData(books);
+        setIsLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching books:", error);
+        setIsLoading(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
+  if (authLoading || isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "70vh",
+        }}
+      >
+        <CircularProgress sx={{ color: "#fff" }} />
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ padding: "16px" }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          color: "#FFD700",
+          marginTop: "80px",
+          textAlign: "center",
+          fontWeight: "bold",
+        }}
+      >
+        Explore
+      </Typography>
+
+      {firebaseData.length === 0 ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+          }}
+        >
+          <Typography variant="h5" color="#fff">
+            All Books Are Sold. Please Come Again Later!
+          </Typography>
+        </Box>
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "16px",
+            justifyContent: "center",
+          }}
+        >
+          {firebaseData.map((item) => (
+            <Card
+              key={item.id}
+              image={item.photoURL ?? "https://via.placeholder.com/150"}
+              title={item.displayName ?? "No Title"}
+              stock={item.stock ?? "0"}
+              details={item.details ?? "No Details Available"}
+              price={item.price ?? 0}
+              onAddToCart={()=>{
+                alert(`${item.displayName} added to cart!`)
+              }
+            }
+            />
+          ))}
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export default Dashboard;
