@@ -84,15 +84,21 @@ const Dashboard = () => {
           {firebaseData.map((item) => (
             <Card
               key={item.id}
+              cardid={item.id}
               image={item.photoURL ?? "https://via.placeholder.com/150"}
-              title={item.displayName ?? "No Title"}
-              stock={item.stock ?? "0"}
+              title={item.title ?? "No Title"}
+              stock={item.stock ?? 0}
               details={item.details ?? "No Details Available"}
               price={item.price ?? 0}
-              onAddToCart={()=>{
-                alert(`${item.displayName} added to cart!`)
-              }
-            }
+              author={item.author ?? "Unknown Author"}
+              category={item.category ?? "Uncategorized"}
+              createdAt={item.createdAt}
+              createdBy={item.createdBy}
+              photoURL={item.photoURL ?? "https://via.placeholder.com/150"}
+              onAddToCart={(e) => {
+                e.stopPropagation();
+                alert(`${item.title} added to cart!`);
+              }}
             />
           ))}
         </Box>

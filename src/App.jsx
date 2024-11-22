@@ -9,6 +9,7 @@ import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
 import Dashboard from './components/Dashboard';
 import IntroText from './components/IntroText';
+import AddNewBook from './components/AddNewBook';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
       <Route index element={<IntroText />} />
       <Route element={<AnotherChecker />}>
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="add-new-book" element={<AddNewBook />} />
       </Route>
       <Route element={<Routechecker />}>
         <Route path="signup" element={<SignupForm />} />
