@@ -10,6 +10,7 @@ import SignupForm from './components/SignupForm';
 import Dashboard from './components/Dashboard';
 import IntroText from './components/IntroText';
 import AddNewBook from './components/AddNewBook';
+import MyBooks from './components/MyBooks';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -18,6 +19,7 @@ const router = createBrowserRouter(
       <Route element={<AnotherChecker />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="add-new-book" element={<AddNewBook />} />
+        <Route path="mybooks" element={<MyBooks />} />
       </Route>
       <Route element={<Routechecker />}>
         <Route path="signup" element={<SignupForm />} />

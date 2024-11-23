@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import { TextField, Button, Container, Typography, Box, CircularProgress } from "@mui/material";
-import uploadToCloudinary from '../JS Files/UploadToCloudinary';;
+import { TextField, Button, Container, Typography, Box, CircularProgress, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
+import uploadToCloudinary from "../JS Files/UploadToCloudinary";
 import { db } from "../JS Files/Firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { AuthContext } from "../context/AuthContext";
@@ -18,6 +18,8 @@ const AddNewBook = () => {
     });
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+
+    const categories = ["Novel", "Islamic", "Fiction", "Non-Fiction", "Science", "History", "Technology", "Art", "Biography", "Others"];
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -51,7 +53,8 @@ const AddNewBook = () => {
                 stock: parseInt(formData.stock, 10) || 0,
                 photoURL: imageUrl,
                 createdAt: serverTimestamp(),
-                createdBy: signin.userLoggedIn.displayName
+                createdBy: signin.userLoggedIn.displayName,
+                createdById:signin.userLoggedIn.uid,
             };
 
             await addDoc(collection(db, "books"), bookData);
@@ -76,12 +79,8 @@ const AddNewBook = () => {
         }
     };
 
-
     return (
-        <Container sx={{
-            width: "50vw", padding: "25px", scale: ".6", mt: "-50px", mb: 0,
-            bgcolor: "#fff", borderRadius: "10px"
-        }}>
+        <Container sx={{ width: "50vw", padding: "25px",  mt: "-50px", mb: 0, mt: "20px", bgcolor: "#fff", borderRadius: "10px" }}>
             <Toaster />
             <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold", textAlign: "center" }}>
                 Add New Book
@@ -112,14 +111,21 @@ const AddNewBook = () => {
                         rows={3}
                         fullWidth
                     />
-                    <TextField
-                        label="Category"
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        fullWidth
-                        required
-                    />
+                    <FormControl fullWidth required>
+                        <InputLabel id="category-label">Category</InputLabel>
+                        <Select
+                            labelId="category-label"
+                            name="category"
+                            value={formData.category}
+                            onChange={handleInputChange}
+                        >
+                            {categories.map((category) => (
+                                <MenuItem key={category} value={category}>
+                                    {category}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <TextField
                         label="Price (in Rs.)"
                         name="price"

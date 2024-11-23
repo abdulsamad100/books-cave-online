@@ -107,7 +107,6 @@ const SignupForm = () => {
           width: '300px',
           padding: 4,
           textAlign: 'center',
-          zIndex: 1,
           height: 'max-content',
           position: 'absolute',
           top: '50%',

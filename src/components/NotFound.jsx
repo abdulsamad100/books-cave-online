@@ -5,11 +5,11 @@ import { Link } from 'react-router-dom';
 const NotFound = () => {
   return (
     <Container>
-      <Box sx={{ py: 5, textAlign: 'center' }}>
+      <Box sx={{ py: 5, textAlign: 'center', color:"#fff"}}>
         <Typography variant="h3" gutterBottom>
           404 - Page Not Found
         </Typography>
-        <Typography variant="body1" paragraph>
+        <Typography variant="body1" paragraph sx={{color:"#fff"}}>
           Oops! The page you are looking for does not exist. It may have been moved or deleted.
         </Typography>
         <Button variant="contained" color="primary" component={Link} to="/">

@@ -40,7 +40,7 @@ const LoginForm = () => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }} 
-      animate={{ opacity: 1, scale: .95 }} 
+      animate={{ opacity: 1, scale: 1.3 }} 
       transition={{ duration: 0.6, ease: 'easeInOut' }} 
     >
       <Container
@@ -53,7 +53,6 @@ const LoginForm = () => {
           width: '300px',
           padding: 3,
           textAlign: 'center',
-          zIndex: 1,
           height: '350px',
           position: 'absolute',
           top: '50%',

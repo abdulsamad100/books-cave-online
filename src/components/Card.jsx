@@ -9,22 +9,23 @@ import {
   Box
 } from "@mui/material";
 
-const Card = ({ image, title, stock, details, price, author, category, createdAt, createdBy, photoURL, onAddToCart, cardid }) => {
-  const formattedDate = createdAt && createdAt.seconds
-    ? new Date(createdAt.seconds * 1000).toLocaleDateString()
-    : createdAt;
-  const displayImage = photoURL || image || "https://via.placeholder.com/150"; // Default fallback image
+const Card = ({ image, title, stock, details, price, author, category, createdAt, photoURL, onAddToCart, cardid }) => {
+  // const formattedDate = createdAt && createdAt.seconds
+  //   ? new Date(createdAt.seconds * 1000).toLocaleDateString()
+  //   : createdAt;
+  const displayImage = photoURL || image || "https://via.placeholder.com/150";
 
   const handleCardClick = () => {
-    console.log(cardid ," >>> added successfully");
-    alert(cardid +" >>> added successfully");
-  } 
+    console.log(cardid, " >>> added successfully");
+    alert(cardid + " >>> added successfully");
+  }
 
   return (
     <MuiCard
       sx={{
-        zIndex: 1,
-        maxWidth: 250,
+        minWidth: 280,
+        pb:"15px",
+        width:280,
         margin: "16px auto",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         borderRadius: "8px",
@@ -41,16 +42,19 @@ const Card = ({ image, title, stock, details, price, author, category, createdAt
         height="200"
         image={displayImage}  // Use fallback image if no photoURL
         alt={title}
+        sx={{
+          WebkitMaskImage: "linear-gradient(to bottom, black 90%, transparent 100%)",
+          maskImage: "linear-gradient(to bottom, black 90%, transparent 100%)",
+          WebkitMaskComposite: "destination-in",
+          maskComposite: "exclude",
+        }}
       />
       <CardContent >
         <Typography variant="h5" sx={{ fontWeight: "bold" }} component="div" gutterBottom>
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" color="text.secondary" sx={{ height: "37px", overflowY: "scroll" }}>
           {details}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {stock} items Available
         </Typography>
 
         {/* New fields */}
@@ -61,23 +65,26 @@ const Card = ({ image, title, stock, details, price, author, category, createdAt
           <Typography variant="body2" color="text.primary">
             Category: <b>{category}</b>
           </Typography>
-          <Typography variant="body2" color="text.primary">
+          {/* <Typography variant="body2" color="text.primary">
             Uploded At: <b>{formattedDate}</b>
           </Typography>
           <Typography variant="body2" color="text.primary">
             Created By: {createdBy}
+          </Typography> */}
+          <Typography variant="body2" color="text.secondary" sx={{ mt: "10px" }}>
+            {stock} items Available
           </Typography>
         </Box>
       </CardContent>
-      <CardActions sx={{ justifyContent: "space-between", padding: "16px" }}>
-        <Typography variant="h6" sx={{ fontWeight: "bold", marginRight: "10px" }}>
+      <CardActions sx={{ justifyContent: "space-between", padding: "16px", mt:"-10px", mb:"-15px" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", mr: "10px", fontSize: "18px" }}>
           Rs. {price.toFixed(0)}
         </Typography>
         <Button
           variant="contained"
           color="primary"
           onClick={onAddToCart}
-          sx={{ color: "#000", backgroundColor: "#FFD700" }}
+          sx={{ color: "#000", backgroundColor: "#FFD700", fontWeight: "bold", fontSize: "13px" }}
         >
           Add to Cart
         </Button>

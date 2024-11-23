@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '../JS Files/Firebase';
@@ -11,7 +11,6 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 const Header = () => {
     const { signin } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
-    const navigate = useNavigate();
 
     const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
@@ -29,30 +28,49 @@ const Header = () => {
     const AuthButtons = () =>
         signin.userLoggedIn ? (
             <>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        borderColor: '#000',
-                        color: '#000',
-                        fontWeight: 'bold',
-                        '&:hover': { backgroundColor: '#fff' },
-                    }}
-                    onClick={() => navigate('/add-new-book')}
-                >
-                    Add New Book
-                </Button>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        borderColor: '#000',
-                        color: '#000',
-                        fontWeight: 'bold',
-                        '&:hover': { backgroundColor: '#fff' },
-                    }}
-                    onClick={() => console.log('My Books clicked!')}
-                >
-                    My Books
-                </Button>
+                <Link to="/dashboard" sx={{ textDecoration: 'none', cursor: "pointer" }}>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            borderColor: '#000',
+                            color: '#000',
+                            fontWeight: 'bold',
+                            '&:hover': { backgroundColor: '#fff' },
+                        }}
+                    >
+                        Explore
+                    </Button>
+                </Link>
+
+                <Link to="/add-new-book" style={{ textDecoration: 'none', cursor: "pointer" }}>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            borderColor: '#000',
+                            color: '#000',
+                            fontWeight: 'bold',
+                            '&:hover': { backgroundColor: '#fff' },
+                        }}
+                    >
+                        Add New Book
+                    </Button>
+                </Link>
+
+                <Link to="/mybooks" style={{ textDecoration: 'none', cursor: "pointer" }}>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            borderColor: '#000',
+                            color: '#000',
+                            fontWeight: 'bold',
+                            '&:hover': { backgroundColor: '#fff' },
+                        }}
+                    >
+                        My Books
+                    </Button>
+                </Link>
+
+
                 <IconButton onClick={handleMenuOpen}>
                     <Avatar
                         alt={signin.userLoggedIn?.displayName || 'User'}
@@ -60,7 +78,19 @@ const Header = () => {
                         sx={{ width: 30, height: 30 }}
                     />
                 </IconButton>
-                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+
+                <Menu
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                >
                     <Box sx={{ textAlign: 'center', p: 2 }}>
                         <Avatar
                             alt={signin.userLoggedIn?.displayName || 'User'}
@@ -101,6 +131,7 @@ const Header = () => {
                         Signup
                     </Button>
                 </Link>
+
                 <Link to="/login" style={{ textDecoration: 'none' }}>
                     <Button
                         variant="outlined"
@@ -123,28 +154,31 @@ const Header = () => {
             sx={{
                 top: 0,
                 left: 0,
-                height: '60px',
+                height: '80px',
                 width: '100%',
                 backgroundColor: '#FFD700',
                 color: '#000',
                 boxShadow: 3,
                 borderRadius: '0 0 16px 16px',
-                zIndex: 10,
                 transition: 'background-color 0.3s ease, color 0.3s ease',
+                justifyContent: "center"
             }}
         >
             <Toaster />
             <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography
-                    variant="h6"
-                    sx={{ fontWeight: 'bold', color: '#000', display: 'flex', alignItems: 'center' }}
-                >
-                    <img src={BookLogo} alt="Book Logo" style={{ height: '30px', marginRight: '8px' }} />
-                    Online Library
-                </Typography>
+                <Link to={"/dashboard"} style={{ textDecoration: 'none', cursor: "pointer" }}>
+                    <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 'bold', color: '#000', display: 'flex', alignItems: 'center', fontSize: "25px" }}
+                    >
+                        <img src={BookLogo} alt="Book Logo" style={{ height: '40px', marginRight: '8px' }} />
+                        Online Library
+                    </Typography>
+                </Link>
+
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     {signin.userLoggedIn && (
-                        <IconButton sx={{ color: '#000', '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.1)' } }}>
+                        <IconButton sx={{ color: '#000', width: "50px", '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.1)' } }}>
                             <ShoppingCartIcon />
                         </IconButton>
                     )}
