@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import Card from "./Card";
+import { motion } from "framer-motion";
 
 const Dashboard = () => {
   const { signin, isLoading: authLoading } = useContext(AuthContext);
@@ -81,25 +82,36 @@ const Dashboard = () => {
             justifyContent: "center",
           }}
         >
-          {firebaseData.map((item) => (
-            <Card
-              key={item.id}
-              cardid={item.id}
-              image={item.photoURL ?? "https://via.placeholder.com/150"}
-              title={item.title ?? "No Title"}
-              stock={item.stock ?? 0}
-              details={item.details ?? "No Details Available"}
-              price={item.price ?? 0}
-              author={item.author ?? "Unknown Author"}
-              category={item.category ?? "Uncategorized"}
-              createdAt={item.createdAt}
-              createdBy={item.createdBy}
-              photoURL={item.photoURL ?? "https://via.placeholder.com/150"}
-              onAddToCart={(e) => {
-                e.stopPropagation();
-                alert(`${item.title} added to cart!`);
-              }}
-            />
+          {firebaseData.map((item, index) => (
+            item.stock > 0 && (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: index * 0.2, 
+                  duration: 0.5,
+                }}
+              >
+                <Card
+                  cardid={item.id}
+                  image={item.photoURL ?? "https://via.placeholder.com/150"}
+                  title={item.title ?? "No Title"}
+                  stock={item.stock ?? 0}
+                  details={item.details ?? "No Details Available"}
+                  price={item.price ?? 0}
+                  author={item.author ?? "Unknown Author"}
+                  category={item.category ?? "Uncategorized"}
+                  createdAt={item.createdAt}
+                  createdBy={item.createdBy}
+                  photoURL={item.photoURL ?? "https://via.placeholder.com/150"}
+                  onAddToCart={(e) => {
+                    e.stopPropagation();
+                    alert(`${item.title} added to cart!`);
+                  }}
+                />
+              </motion.div>
+            )
           ))}
         </Box>
       )}
