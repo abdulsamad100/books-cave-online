@@ -319,7 +319,7 @@ const MyBooks = () => {
                     </Typography>
                 </Box>
             ) : (
-                <Box sx={{ display: "flex", flexDirection: "column", gap: "16px", width: "90%", alignItems: "center" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%", alignItems: "center" }}>
                     {myBooks.map((book) => (
                         <Card
                             key={book.id}
@@ -328,19 +328,22 @@ const MyBooks = () => {
                                 alignItems: "center",
                                 backgroundColor: "#333",
                                 color: "#fff",
+                                height:"140px",
                                 padding: "16px",
-                                width: "90%"
+                                width: "max-content",
+                                borderRadius:"15px"
                             }}
                         >
                             <CardMedia
                                 component="img"
-                                sx={{ width: "150px", height: "150px", borderRadius: "8px" }}
+                                sx={{ width: "135px", height: "135px", borderRadius: "10px" }}
                                 image={book.photoURL || "https://via.placeholder.com/150"}
                                 alt={book.title}
                             />
                             <CardContent sx={{ flex: 1 }}>
                                 <Typography variant="h6">{book.title}</Typography>
-                                <Typography variant="body2" sx={{ opacity: 0.8, width: "500px", height: "40px", overflow: "hidden", }}>
+                                <Typography variant="body2" sx={{fontWeight:"bold"}}>{book.author}</Typography>
+                                <Typography variant="body2" sx={{ opacity: 0.8, width: "400px", height: "40px", overflow: "hidden", }}>
                                     {book.details}
                                 </Typography>
                                 <Typography variant="body2" sx={{ mt: 1 }}>
@@ -348,7 +351,7 @@ const MyBooks = () => {
                                 </Typography>
                                 <Typography variant="body2">Stock: {book.stock}</Typography>
                             </CardContent>
-                            <Box>
+                            <Box sx={{display:"flex", flexDirection:"column", marginLeft:"20px"}}>
                                 <Button
                                     variant="contained"
                                     sx={{

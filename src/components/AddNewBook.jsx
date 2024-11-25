@@ -5,6 +5,8 @@ import { db } from "../JS Files/Firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { AuthContext } from "../context/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const AddNewBook = () => {
     const { signin } = useContext(AuthContext);
@@ -19,6 +21,7 @@ const AddNewBook = () => {
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    const navigate = useNavigate();
     const categories = ["Novel", "Islamic", "Fiction", "Non-Fiction", "Science", "History", "Technology", "Art", "Biography", "Others"];
 
     const handleInputChange = (e) => {
@@ -54,7 +57,7 @@ const AddNewBook = () => {
                 photoURL: imageUrl,
                 createdAt: serverTimestamp(),
                 createdBy: signin.userLoggedIn.displayName,
-                createdById:signin.userLoggedIn.uid,
+                createdById: signin.userLoggedIn.uid,
             };
 
             await addDoc(collection(db, "books"), bookData);
@@ -71,6 +74,7 @@ const AddNewBook = () => {
                 stock: "",
             });
             setImage(null);
+            navigate("/mybooks");
         } catch (error) {
             console.error("Submission failed:", error.message);
             toast.error("Failed to add book. Please try again.", { id: loadingToastId });
@@ -80,90 +84,98 @@ const AddNewBook = () => {
     };
 
     return (
-        <Container sx={{ width: "50vw", padding: "25px",  mt: "-50px", mb: 0, mt: "20px", bgcolor: "#fff", borderRadius: "10px" }}>
-            <Toaster />
-            <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold", textAlign: "center" }}>
-                Add New Book
-            </Typography>
-            <form onSubmit={handleSubmit}>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <TextField
-                        label="Title"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleInputChange}
-                        fullWidth
-                        required
-                    />
-                    <TextField
-                        label="Author"
-                        name="author"
-                        value={formData.author}
-                        onChange={handleInputChange}
-                        fullWidth
-                    />
-                    <TextField
-                        label="Details"
-                        name="details"
-                        value={formData.details}
-                        onChange={handleInputChange}
-                        multiline
-                        rows={3}
-                        fullWidth
-                    />
-                    <FormControl fullWidth required>
-                        <InputLabel id="category-label">Category</InputLabel>
-                        <Select
-                            labelId="category-label"
-                            name="category"
-                            value={formData.category}
+        <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: .9 }}
+            transition={{ duration: 0.7, ease: 'easeIn ' }}
+        >
+            <Container sx={{ width: "50vw", minWidth: "280px", padding: "25px", mb: 0, mt: "100px", bgcolor: "#fff", borderRadius: "10px" }}>
+                <Toaster />
+                <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold", textAlign: "center" }}>
+                    Add New Book
+                </Typography>
+                <form onSubmit={handleSubmit}>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        <TextField
+                            label="Title"
+                            name="title"
+                            value={formData.title}
                             onChange={handleInputChange}
-                        >
-                            {categories.map((category) => (
-                                <MenuItem key={category} value={category}>
-                                    {category}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    <TextField
-                        label="Price (in Rs.)"
-                        name="price"
-                        value={formData.price}
-                        onChange={handleInputChange}
-                        type="number"
-                        fullWidth
-                        required
-                    />
-                    <TextField
-                        label="Stock"
-                        name="stock"
-                        value={formData.stock}
-                        onChange={handleInputChange}
-                        type="number"
-                        fullWidth
-                    />
-                    <Button variant="contained" component="label" sx={{ backgroundColor: "#FFD700", color: "#000" }}>
-                        Upload Image
-                        <input type="file" hidden onChange={handleImageChange} />
-                    </Button>
-                    {image && <Typography variant="body2">Selected Image: {image.name}</Typography>}
+                            fullWidth
+                            required
+                        />
+                        <TextField
+                            label="Author"
+                            name="author"
+                            value={formData.author}
+                            onChange={handleInputChange}
+                            fullWidth
+                        />
+                        <TextField
+                            label="Details"
+                            name="details"
+                            value={formData.details}
+                            onChange={handleInputChange}
+                            multiline
+                            rows={3}
+                            fullWidth
+                        />
+                        <FormControl fullWidth required>
+                            <InputLabel id="category-label">Category</InputLabel>
+                            <Select
+                                labelId="category-label"
+                                name="category"
+                                value={formData.category}
+                                onChange={handleInputChange}
+                            >
+                                {categories.map((category) => (
+                                    <MenuItem key={category} value={category}>
+                                        {category}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            label="Stock"
+                            name="stock"
+                            value={formData.stock}
+                            onChange={handleInputChange}
+                            type="number"
+                            fullWidth
+                        />
+                        <Box sx={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "space-between" }}>
+                            <TextField
+                                label="Price (in Rs.)"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleInputChange}
+                                type="number"
+                                sx={{ width: "33vw" }}
+                                required
+                            />
+                            <Button variant="contained" component="label" sx={{ backgroundColor: "#FFD700", color: "#000", height: "50px" }}>
+                                Upload Image
+                                <input type="file" hidden onChange={handleImageChange} />
+                            </Button>
+                        </Box>
+                        {image && <Typography variant="body2">Selected Image: {image.name}</Typography>}
 
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        disabled={isLoading}
-                        sx={{
-                            backgroundColor: "#FFD700",
-                            color: "#000",
-                            "&:hover": { backgroundColor: "#FFC107" },
-                        }}
-                    >
-                        {isLoading ? <CircularProgress size={24} sx={{ color: "#000" }} /> : "Add Book"}
-                    </Button>
-                </Box>
-            </form>
-        </Container>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            disabled={isLoading}
+                            sx={{
+                                backgroundColor: "#FFD700",
+                                color: "#000",
+                                "&:hover": { backgroundColor: "#FFC107" },
+                            }}
+                        >
+                            {isLoading ? <CircularProgress size={24} sx={{ color: "#000" }} /> : "Add Book"}
+                        </Button>
+                    </Box>
+                </form>
+            </Container>
+        </motion.div>
     );
 };
 
