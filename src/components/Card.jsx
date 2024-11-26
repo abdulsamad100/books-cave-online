@@ -18,9 +18,9 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const ModalContent = styled(motion.div)({
   backgroundColor: "#fff",
-  padding: (4),
+  padding: 4,
   borderRadius: "8px",
-  boxShadow: [5],
+  boxShadow: 5,
   margin: "auto",
   position: "relative",
   display: "flex",
