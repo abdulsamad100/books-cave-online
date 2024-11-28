@@ -8,32 +8,44 @@ import {
   Button,
   Box,
   Modal,
-  Backdrop,
   IconButton,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion, AnimatePresence } from "framer-motion";
 import CloseIcon from "@mui/icons-material/Close";
 
-
-const ModalContent = styled(motion.div)({
+const ModalContent = styled(motion.div)(({ theme }) => ({
   backgroundColor: "#fff",
-  padding: 4,
+  padding: theme.spacing(2),
   borderRadius: "8px",
   boxShadow: 5,
   margin: "auto",
   position: "relative",
   display: "flex",
   flexDirection: "column",
-  gap: "20px",
+  gap: theme.spacing(2),
   overflow: "hidden",
-});
+}));
 
-const Card = ({ image, title, stock, details, price, author, category, createdAt, photoURL, onAddToCart, cardid, createdBy }) => {
+const Card = ({
+  image,
+  title,
+  stock,
+  details,
+  price,
+  author,
+  category,
+  createdAt,
+  photoURL,
+  onAddToCart,
+  cardid,
+  createdBy,
+}) => {
   const [IsCardOpen, setIsCardOpen] = useState(false);
-  const formattedDate = createdAt && createdAt.seconds
-    ? new Date(createdAt.seconds * 1000).toLocaleDateString()
-    : createdAt;
+  const formattedDate =
+    createdAt && createdAt.seconds
+      ? new Date(createdAt.seconds * 1000).toLocaleDateString()
+      : createdAt;
   const displayImage = photoURL || image || "https://via.placeholder.com/150";
 
   return (
@@ -52,116 +64,124 @@ const Card = ({ image, title, stock, details, price, author, category, createdAt
               BackdropProps={{
                 style: {
                   backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  zIndex: -1300,
                 },
               }}
               keepMounted
             >
-
-            <ModalContent
-              layoutId={`card-${cardid}`}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 20 }}
-              sx={{
-                width: "80vw",
-                height: "80vh",
-                maxHeight: "80vh",
-                mt: "10vh",
-                padding: "15px",
-                position:"absolute",
-                top: "10%",
-                left: "25%",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              <IconButton
-                onClick={() => setIsCardOpen(false)}
+              <ModalContent
+                layoutId={`card-${cardid}`}
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
                 sx={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  color: "grey.700",
-                  zIndex: 1,
+                  mt: "2%",
+                  width: { xs: "90vw", sm: "80vw", md: "70vw", lg: "60vw" },
+                  height: "max-content",
+                  padding: "15px",
+                  transform: "translate(-50%, -50%)",
+                  overflow: "scroll",
                 }}
               >
-                <CloseIcon />
-              </IconButton>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: { xs: "column", md: "row" },
-                  gap: 2,
-                }}
-              >
-                <Box sx={{ flex: 1 }}>
-                  <CardMedia
-                    component="img"
-                    image={displayImage}
-                    alt={title}
-                    sx={{
-                      Height: "500px",
-                      maxWidth: "100%",
-                      objectFit: "cover",
-                      borderRadius: "8px",
-                    }}
-                  />
-                </Box>
-                <Box sx={{ flex: 2, display: "flex", flexDirection: "column", gap: 2 }}>
-                  <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
-                    {title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {details}
-                  </Typography>
-                  <Typography variant="body2" color="text.primary">
-                    <b>Author:</b> {author}
-                  </Typography>
-                  <Typography variant="body2" color="text.primary">
-                    <b>Category:</b> {category}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    <b>Stock:</b> {stock} items available
-                  </Typography>
-                </Box>
-                <Box sx={{ position: "absolute", bottom: "70px", right: "20px", textAlign: "end" }}>
-                  <Typography variant="body2" sx={{}}>
-                    {createdBy}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {formattedDate}
-                  </Typography>
-                </Box>
-              </Box>
-              <CardActions
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mt: 2,
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333" }}>
-                  Rs. {price.toFixed(0)}
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={onAddToCart}
+                <IconButton
+                  onClick={() => setIsCardOpen(false)}
                   sx={{
-                    backgroundColor: "#FFD700",
-                    color: "#000",
-                    fontWeight: "bold",
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    color: "grey.700",
+                    zIndex: 1,
                   }}
                 >
-                  Add to Cart
-                </Button>
-              </CardActions>
-            </ModalContent>
-          </Modal>
+                  <CloseIcon />
+                </IconButton>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", md: "row" },
+                    gap: 2,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      flex: 1,
+                      maxWidth: { xs: "100%", md: "40%" },
+                      maxHeight: "100%",
+                    }}
+                  >
+                    <CardMedia
+                      component="img"
+                      image={displayImage}
+                      alt={title}
+                      sx={{
+                        width: "100%",
+                        height: "auto",
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      flex: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 2,
+                      maxWidth: { xs: "100%", md: "60%" },
+                    }}
+                  >
+                    <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                      {title}
+                    </Typography>
+                    <Typography variant="body2" color="text.primary">
+                      {details}
+                    </Typography>
+                    <Typography variant="body2" color="text.primary">
+                      <b>Author:</b> {author}
+                    </Typography>
+                    <Typography variant="body2" color="text.primary">
+                      <b>Category:</b> {category}
+                    </Typography>
+                    <Typography variant="body2" color="text.primary">
+                      <b>Stock:</b> {stock} items available
+                    </Typography>
+                    <Typography variant="body2">
+                      <b>Uploaded By: </b>{createdBy}
+                    </Typography>
+                    <Typography variant="body2" color="text.primary">
+                      <b>Uploaded By: </b>{formattedDate}
+                    </Typography>
+                  </Box>
+                </Box>
+                <CardActions
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mt: 2,
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333" }}>
+                    Rs. {price.toFixed(0)}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    onClick={onAddToCart}
+                    sx={{
+                      backgroundColor: "#FFD700",
+                      color: "#000",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Add to Cart
+                  </Button>
+                </CardActions>
+              </ModalContent>
+            </Modal>
+
           </motion.div>
         )}
-    </AnimatePresence >
+      </AnimatePresence>
 
       <motion.div
         layoutId={`card-${cardid}`}
@@ -171,9 +191,9 @@ const Card = ({ image, title, stock, details, price, author, category, createdAt
         <MuiCard
           sx={{
             minWidth: 280,
-            pb: "15px",
-            width: 280,
+            maxWidth: { xs: "100%", sm: 280 },
             margin: "16px auto",
+            pb: "15px",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
             transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -189,21 +209,30 @@ const Card = ({ image, title, stock, details, price, author, category, createdAt
             image={displayImage}
             alt={title}
             sx={{
-              WebkitMaskImage: "linear-gradient(to bottom, black 90%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, black 90%, transparent 100%)",
               maskImage: "linear-gradient(to bottom, black 90%, transparent 100%)",
               WebkitMaskComposite: "destination-in",
               maskComposite: "exclude",
             }}
           />
-          <CardContent >
-            <Typography variant="h5" sx={{ fontWeight: "bold" }} component="div" gutterBottom>
+          <CardContent>
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: "bold" }}
+              component="div"
+              gutterBottom
+            >
               {title}
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ height: "37px", overflowY: "scroll" }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ height: "37px", overflowY: "scroll" }}
+            >
               {details}
             </Typography>
 
-            {/* New fields */}
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" color="text.primary">
                 Author: <b>{author}</b>
@@ -211,20 +240,43 @@ const Card = ({ image, title, stock, details, price, author, category, createdAt
               <Typography variant="body2" color="text.primary">
                 Category: <b>{category}</b>
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: "10px" }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mt: "10px" }}
+              >
                 {stock} items Available
               </Typography>
             </Box>
           </CardContent>
-          <CardActions sx={{ justifyContent: "space-between", padding: "16px", mt: "-10px", mb: "-15px" }}>
-            <Typography variant="h6" sx={{ fontWeight: "bold", mr: "10px", fontSize: "18px" }}>
+          <CardActions
+            sx={{
+              justifyContent: "space-between",
+              padding: "16px",
+              mt: "-10px",
+              mb: "-15px",
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                mr: "10px",
+                fontSize: "18px",
+              }}
+            >
               Rs. {price.toFixed(0)}
             </Typography>
             <Button
               variant="contained"
               color="primary"
               onClick={onAddToCart}
-              sx={{ color: "#000", backgroundColor: "#FFD700", fontWeight: "bold", fontSize: "13px" }}
+              sx={{
+                color: "#000",
+                backgroundColor: "#FFD700",
+                fontWeight: "bold",
+                fontSize: "13px",
+              }}
             >
               Add to Cart
             </Button>

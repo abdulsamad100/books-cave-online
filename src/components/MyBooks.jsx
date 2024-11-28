@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
-import { collection, onSnapshot, deleteDoc, doc, query, where, getDoc, updateDoc } from "firebase/firestore";
+import { collection, onSnapshot, deleteDoc, doc, query, where, updateDoc } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import toast from "react-hot-toast";
 
@@ -39,6 +39,8 @@ const MyBooks = () => {
     const { signin } = useContext(AuthContext);
     const [myBooks, setMyBooks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [editModalOpen, setEditModalOpen] = useState(false);
+    const [selectedBook, setSelectedBook] = useState(null);
 
     useEffect(() => {
         if (!signin?.userLoggedIn?.displayName) return;
@@ -74,6 +76,31 @@ const MyBooks = () => {
         } catch (error) {
             console.error("Error deleting book:", error);
             toast.error("Failed to delete the book.");
+        }
+    };
+
+    const handleEdit = (book) => {
+        setSelectedBook(book);
+        setEditModalOpen(true);
+    };
+
+    const handleEditSave = async () => {
+        if (!selectedBook) return;
+
+        try {
+            const bookDoc = doc(db, "books", selectedBook.id);
+            await updateDoc(bookDoc, {
+                title: selectedBook.title,
+                author: selectedBook.author,
+                details: selectedBook.details,
+                price: selectedBook.price,
+                stock: selectedBook.stock,
+            });
+            toast.success("Book updated successfully!");
+            setEditModalOpen(false);
+        } catch (error) {
+            console.error("Error updating book:", error);
+            toast.error("Failed to update the book.");
         }
     };
 
@@ -177,7 +204,7 @@ const MyBooks = () => {
                                             "&:hover": { backgroundColor: "#FFC107" },
                                             mb: 1,
                                         }}
-                                        onClick={() => console.log("Edit book", book.id)}
+                                        onClick={() => handleEdit(book)}
                                     >
                                         Edit
                                     </Button>
@@ -198,6 +225,75 @@ const MyBooks = () => {
                     ))}
                 </motion.div>
             )}
+
+            {/* Edit Modal */}
+            <Modal open={editModalOpen} onClose={() => setEditModalOpen(false)}>
+                <Box
+                    sx={{
+                        backgroundColor: "#fff",
+                        borderRadius: "10px",
+                        padding: "24px",
+                        maxWidth: "500px",
+                        margin: "100px auto",
+                        boxShadow: 24,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                    }}
+                >
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                        Edit Book
+                    </Typography>
+                    <TextField
+                        label="Title"
+                        value={selectedBook?.title || ""}
+                        onChange={(e) => setSelectedBook({ ...selectedBook, title: e.target.value })}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Author"
+                        value={selectedBook?.author || ""}
+                        onChange={(e) => setSelectedBook({ ...selectedBook, author: e.target.value })}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Details"
+                        value={selectedBook?.details || ""}
+                        onChange={(e) => setSelectedBook({ ...selectedBook, details: e.target.value })}
+                        fullWidth
+                        multiline
+                        rows={3}
+                    />
+                    <TextField
+                        label="Price"
+                        type="number"
+                        value={selectedBook?.price || ""}
+                        onChange={(e) => setSelectedBook({ ...selectedBook, price: Number(e.target.value) })}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Stock"
+                        type="number"
+                        value={selectedBook?.stock || ""}
+                        onChange={(e) => setSelectedBook({ ...selectedBook, stock: Number(e.target.value) })}
+                        fullWidth
+                    />
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, }}>
+                        <Button onClick={() => setEditModalOpen(false)} 
+                        sx={{
+                            color: "#FF0000",
+                            "&:hover": { backgroundColor: "#FF0000", color: "white" },
+                        }}>Cancel</Button>
+                        <Button variant="contained" sx={{
+                            backgroundColor: "#FFD700",
+                            color: "#000",
+                            "&:hover": { backgroundColor: "#FFC107" },
+                        }} onClick={handleEditSave}>
+                            Save
+                        </Button>
+                    </Box>
+                </Box>
+            </Modal>
         </Box>
     );
 };
