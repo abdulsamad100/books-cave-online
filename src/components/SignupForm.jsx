@@ -48,7 +48,6 @@ const SignupForm = () => {
   
       const user = userCredential.user;
   
-      // Handle profile image upload or fallback to default
       const profileImage = selectedImage 
         ? await uploadToCloudinary(selectedImage) 
         : defaultProfilePic;
@@ -57,8 +56,7 @@ const SignupForm = () => {
         displayName: formValues.current.username,
         photoURL: profileImage,
       });
-  
-      // Save user data in Firestore
+
       await setDoc(doc(db, 'users', user.uid), {
         username: formValues.current.username,
         email: formValues.current.email,

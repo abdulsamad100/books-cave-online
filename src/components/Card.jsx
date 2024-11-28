@@ -65,7 +65,8 @@ const Card = ({ image, title, stock, details, price, author, category, createdAt
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
               sx={{
-                width: "50vw",
+                width: "80vw",
+                height: "80vh",
                 maxHeight: "80vh",
                 mt: "10vh",
                 padding: "15px",

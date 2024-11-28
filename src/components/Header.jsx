@@ -32,7 +32,6 @@ const Header = React.memo(() => {
 
     const isSmallScreen = useMediaQuery('(max-width:600px)');
 
-    // Handlers optimized with useCallback
     const handleMenuOpen = useCallback((e) => setAnchorEl(e.currentTarget), []);
     const handleMenuClose = useCallback(() => setAnchorEl(null), []);
 
@@ -94,13 +93,13 @@ const Header = React.memo(() => {
                                 src={signin.userLoggedIn?.photoURL || ''}
                                 sx={{ width: 100, height: 100, border: '2px solid #fff', mb: 1 }}
                             />
-                            <Typography variant="body1" sx={{ fontWeight: 'bold', mt: 1 ,fontSize:"1.8rem"}}>
+                            <Typography variant="body1" sx={{ fontWeight: 'bold', mt: 1, fontSize: "1.8rem" }}>
                                 {signin.userLoggedIn?.displayName || 'User Name'}
                             </Typography>
                             <Typography variant="body2" sx={{ fontWeight: 'bold', mt: 1 }}>
                                 {signin.userLoggedIn?.email || 'Email'}
                             </Typography>
-                            <Button variant="outlined" sx={{...buttonStyles,mt:2}} onClick={Signout}>
+                            <Button variant="outlined" sx={{ ...buttonStyles, mt: 2 }} onClick={Signout}>
                                 Signout
                             </Button>
                         </Box>
@@ -267,7 +266,7 @@ const Header = React.memo(() => {
                                                         variant="body2"
                                                         sx={{
                                                             fontWeight: 'bold',
-                                                            mb: 2, // Space below the email
+                                                            mb: 2,
                                                         }}
                                                     >
                                                         {signin.userLoggedIn?.email || 'Email'}
@@ -290,34 +289,12 @@ const Header = React.memo(() => {
                                         </>
                                     ) : (
                                         <>
-                                            <Link to="/signup" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-                                                <Button
-                                                    variant="outlined"
-                                                    sx={{
-                                                        borderColor: '#000',
-                                                        color: '#000',
-                                                        fontWeight: 'bold',
-                                                        '&:hover': { backgroundColor: '#fff' },
-                                                    }}
-                                                >
-                                                    SignUp
-                                                </Button>
-                                            </Link>
-                                            <Link to="/login" style={{ textDecoration: 'none', cursor: 'pointer' }}>
-                                                <Button
-                                                    variant="outlined"
-                                                    sx={{
-                                                        borderColor: '#000',
-                                                        color: '#000',
-                                                        fontWeight: 'bold',
-                                                        '&:hover': { backgroundColor: '#fff' },
-                                                    }}
-                                                >
-                                                    LogIn
-                                                </Button>
-                                            </Link>
                                             <ListItemButton component={Link} to="/login">
                                                 <ListItemText primary="Login" />
+                                            </ListItemButton>
+
+                                            <ListItemButton component={Link} to="/signup">
+                                                <ListItemText primary="Signup" />
                                             </ListItemButton>
                                         </>
                                     )}

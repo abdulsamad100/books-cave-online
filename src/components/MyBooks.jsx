@@ -14,19 +14,18 @@ import {
     Select,
     FormControl,
 } from "@mui/material";
-import { motion } from "framer-motion"; // Import Framer Motion
+import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
 import { collection, onSnapshot, deleteDoc, doc, query, where, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import toast from "react-hot-toast";
 
-// Animation Variants
 const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.2, // Delays each child's animation
+            staggerChildren: 0.2,
         },
     },
 };
