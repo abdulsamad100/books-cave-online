@@ -1,15 +1,15 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, TextField, Button, Typography, Link } from '@mui/material';
 import { auth } from '../JS Files/Firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import toast, { Toaster } from 'react-hot-toast';
 import { ThemeContext } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion'; 
+import { motion } from 'framer-motion';
 
 const LoginForm = () => {
-  const { theme } = useContext(ThemeContext); 
-  const navigate = useNavigate(); 
+  const { theme } = useContext(ThemeContext);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -30,18 +30,27 @@ const LoginForm = () => {
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
       toast.dismiss(loadingToast);
-      toast.success('Signed in successfully!');
+      navigate("/dashboard");
     } catch (error) {
       toast.dismiss(loadingToast);
-      toast.error('Email/Password is incorrect');
+
+      if (error.message.includes('auth/wrong-password')) {
+        toast.error('Incorrect password. Please try again.');
+      } else if (error.message.includes('auth/user-not-found')) {
+        toast.error('No user found with this email. Please sign up first.');
+      } else if (error.message.includes('auth/invalid-email')) {
+        toast.error('Invalid email address. Please check and try again.');
+      } else {
+        toast.error('An error occurred. Please try again later.');
+      }
     }
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.5 }} 
-      animate={{ opacity: 1, scale: 1 }} 
-      transition={{ duration: 0.6, ease: 'easeInOut' }} 
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6, ease: 'easeInOut' }}
     >
       <Container
         sx={{
@@ -62,7 +71,7 @@ const LoginForm = () => {
       >
         <Toaster />
         <Typography variant="h5" gutterBottom
-        sx={{ fontWeight: 'bold', color: '#2E3B55' }}
+          sx={{ fontWeight: 'bold', color: '#2E3B55' }}
         >
           Login
         </Typography>
@@ -114,8 +123,8 @@ const LoginForm = () => {
           </motion.div>
 
           <motion.div
-            whileHover={{ scale: 1.05 }} 
-            whileTap={{ scale: 0.95 }} 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2 }}
           >
             <Button

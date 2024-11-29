@@ -31,44 +31,48 @@ const SignupForm = () => {
     ev.preventDefault();
     setbuttonDisable(true);
     const loadingToastId = toast.loading('Signing Up...');
-  
-    if (!formValues.current.username || !formValues.current.email || !formValues.current.password) {
+
+    if (!formValues.current?.username || !formValues.current?.email || !formValues.current?.password) {
       toast.dismiss(loadingToastId);
       toast.error('Please fill in all fields');
       setbuttonDisable(false);
       return;
     }
-  
+
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formValues.current.email,
         formValues.current.password
       );
-  
+
       const user = userCredential.user;
-  
-      const profileImage = selectedImage 
-        ? await uploadToCloudinary(selectedImage) 
+
+      const profileImage = selectedImage
+        ? await uploadToCloudinary(selectedImage).catch(() => {
+          throw new Error('Error uploading profile image');
+        })
         : defaultProfilePic;
-  
+
+
       await updateProfile(user, {
         displayName: formValues.current.username,
         photoURL: profileImage,
       });
+
 
       await setDoc(doc(db, 'users', user.uid), {
         username: formValues.current.username,
         email: formValues.current.email,
         photoURL: profileImage,
       });
-  
+
       toast.success('Signed Up Successfully', { id: loadingToastId });
       navigate('/login');
     } catch (error) {
       setbuttonDisable(false);
       toast.dismiss(loadingToastId);
-  
+
       const errorMessage = error.message;
       if (errorMessage.includes('auth/invalid-email')) {
         toast.error('Please enter a valid email address.');
@@ -76,6 +80,8 @@ const SignupForm = () => {
         toast.error('This email is already registered. Please log in.');
       } else if (errorMessage.includes('auth/weak-password')) {
         toast.error('Password must be at least 6 characters long.');
+      } else if (errorMessage.includes('Error uploading profile image')) {
+        toast.error('Failed to upload profile image. Try again later.');
       } else {
         toast.error('An error occurred. Please try again.');
       }

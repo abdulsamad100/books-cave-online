@@ -1,43 +1,38 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
-import { collection, onSnapshot, doc, getDoc, updateDoc, setDoc, serverTimestamp, } from "firebase/firestore";
+import { collection, onSnapshot, doc, getDoc, updateDoc, setDoc, serverTimestamp, orderBy, query, addDoc } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import Card from "./Card";
 import { motion } from "framer-motion";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { signin, isLoading: authLoading } = useContext(AuthContext);
   const [firebaseData, setFirebaseData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [processingItemId, setProcessingItemId] = useState(null); // Track the item being processed
 
   const navigate = useNavigate();
 
   const addToCart = async (userId, item) => {
-    console.log("uid>>>>>", userId);
-    console.log("pid>>>>>", item.id);
-
+    setProcessingItemId(item.id); // Set the current item being processed
     try {
-      // Create a reference to the product document in the 'books' collection
-      const productRef = doc(db, 'books', item.id);
+      const productRef = doc(db, "books", item.id);
       const productSnapshot = await getDoc(productRef);
-
-      console.log(productSnapshot);  // Log to see the product snapshot data
 
       if (productSnapshot.exists()) {
         const productData = productSnapshot.data();
         const currentStock = productData.stock;
 
         if (currentStock > 0) {
-          // Update the stock in Firestore
           await updateDoc(productRef, {
-            stock: currentStock - 1
+            stock: currentStock - 1,
           });
-          const cartRef = doc(db, 'Carts', userId + "_" + item.id);
 
-          await setDoc(cartRef, {
+          const cartRef = collection(db, "Carts");
+          await addDoc(cartRef, {
             createdFor: userId,
             buyerName: signin?.userLoggedIn?.displayName,
             productId: item?.id,
@@ -45,25 +40,45 @@ const Dashboard = () => {
             productPrice: item?.price,
             quantity: 1,
             createdAt: serverTimestamp(),
-            photoURL: item?.photoURL
+            photoURL: item?.photoURL,
           });
-          toast.success('Item added to cart successfully');
-          navigate("/cart")
+
+          toast.success("Item added to cart successfully");
+          navigate("/cart");
         } else {
           toast.error("Product Out of Stock");
         }
       } else {
-        console.log('Product not found! Please Reload the page');
+        console.error("Product not found! Please reload the page.");
       }
     } catch (error) {
-      toast.error("Error Adding Product to Cart Please Try Again");
+      toast.error("Error adding product to cart. Please try again.");
       console.error("Error adding product to cart: ", error);
+    } finally {
+      setProcessingItemId(null); // Reset the processing state
     }
   };
 
   useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      toast.error("You are about to leave the page. Your changes may not be saved.");
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    const booksRef = collection(db, "books");
+    const booksQuery = query(booksRef, orderBy("createdAt", "desc"));
+
     const unsubscribe = onSnapshot(
-      collection(db, "books"),
+      booksQuery,
       (querySnapshot) => {
         const books = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -77,6 +92,7 @@ const Dashboard = () => {
         setIsLoading(false);
       }
     );
+
     return () => unsubscribe();
   }, []);
 
@@ -159,10 +175,12 @@ const Dashboard = () => {
                     photoURL={item.photoURL ?? "https://via.placeholder.com/150"}
                     onAddToCart={async (e) => {
                       e.stopPropagation();
-                      const loadingToast = toast.loading("Wait While Adding to Cart")
-                      await addToCart(signin.userLoggedIn.uid, item)
-                      toast.dismiss();
+                      if (processingItemId === item.id) return; // Prevent duplicate clicks
+                      const loadingToast = toast.loading("Adding to cart...");
+                      await addToCart(signin.userLoggedIn.uid, item);
+                      toast.dismiss(loadingToast);
                     }}
+                    disabled={processingItemId === item.id} // Disable button while processing
                   />
                 </motion.div>
               )

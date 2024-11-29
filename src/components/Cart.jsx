@@ -13,24 +13,10 @@ import { collection, query, where, onSnapshot, deleteDoc, doc, getDoc, updateDoc
 import { auth, db } from "../JS Files/Firebase";
 import toast from "react-hot-toast";
 
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.2,
-        },
-    },
-};
-
-const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-};
-
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [removingItemId, setRemovingItemId] = useState(null); // Track the item being removed
     const user = auth.currentUser;
 
     useEffect(() => {
@@ -50,7 +36,6 @@ const Cart = () => {
                     ...data,
                 });
             });
-            console.log("Cart Items:", items);
             setCartItems(items);
             setIsLoading(false);
         });
@@ -59,6 +44,7 @@ const Cart = () => {
     }, [user]);
 
     const handleDelete = async (itemId, productId) => {
+        setRemovingItemId(itemId); // Set the item being processed
         try {
             const productRef = doc(db, "books", productId);
             const productSnapshot = await getDoc(productRef);
@@ -77,6 +63,8 @@ const Cart = () => {
         } catch (error) {
             console.error("Error deleting item:", error);
             toast.error("Failed to remove the item.");
+        } finally {
+            setRemovingItemId(null); // Clear the processing state
         }
     };
 
@@ -125,9 +113,6 @@ const Cart = () => {
                 </Box>
             ) : (
                 <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
                     style={{
                         display: "flex",
                         flexDirection: "column",
@@ -136,7 +121,7 @@ const Cart = () => {
                     }}
                 >
                     {cartItems.map((item) => (
-                        <motion.div key={item.id} variants={cardVariants}>
+                        <motion.div key={item.id}>
                             <MuiCard
                                 sx={{
                                     display: "flex",
@@ -175,8 +160,9 @@ const Cart = () => {
                                             "&:hover": { backgroundColor: "#ff3333" },
                                         }}
                                         onClick={() => handleDelete(item.id, item.productId)}
+                                        disabled={removingItemId === item.id} // Disable if being processed
                                     >
-                                        Remove
+                                        {removingItemId === item.id ? "Removing..." : "Remove"}
                                     </Button>
                                 </Box>
                             </MuiCard>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { TextField, Button, Container, Typography, Box, CircularProgress, MenuItem, Select, InputLabel, FormControl } from "@mui/material";
 import uploadToCloudinary from "../JS Files/UploadToCloudinary";
 import { db } from "../JS Files/Firebase";
@@ -19,7 +19,6 @@ const AddNewBook = () => {
     });
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
     const navigate = useNavigate();
     const categories = ["Novel", "Islamic", "Fiction", "Non-Fiction", "Science", "History", "Technology", "Art", "Biography", "Others"];
 
@@ -81,6 +80,13 @@ const AddNewBook = () => {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        // Cleanup toast notifications when the component unmounts
+        return () => {
+            toast.dismiss();  // Dismiss any active toasts when navigating away from the page
+        };
+    }, []);
 
     return (
         <Container sx={{scale:0.9, width: "50vw", minWidth: "280px", padding: "25px", mb: 0, mt: "100px", bgcolor: "#fff", borderRadius: "10px" }}>

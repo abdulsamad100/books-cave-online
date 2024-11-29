@@ -48,7 +48,7 @@ const Card = ({
       : createdAt;
   const displayImage = photoURL || image || "https://via.placeholder.com/150";
 
-  
+
 
   return (
     <>
@@ -64,8 +64,9 @@ const Card = ({
               open={IsCardOpen}
               onClose={() => setIsCardOpen(false)}
               BackdropProps={{
-                style: {
+                sx: {
                   backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  // padding:"10px",
                 },
               }}
               keepMounted
@@ -79,7 +80,7 @@ const Card = ({
                 sx={{
                   mt: "2%",
                   width: { xs: "90vw", sm: "80vw", md: "70vw", lg: "60vw" },
-                  height: "max-content",
+                  height: { xs: "90vh", sm: "80vh", md: "max-content", lg: "max-content" },
                   padding: "15px",
                   transform: "translate(-50%, -50%)",
                   overflow: "scroll",
@@ -95,7 +96,7 @@ const Card = ({
                     zIndex: 1,
                   }}
                 >
-                  <CloseIcon />
+                <CloseIcon sx={{ color: "black", mixBlendMode: "difference" }} />
                 </IconButton>
                 <Box
                   sx={{
