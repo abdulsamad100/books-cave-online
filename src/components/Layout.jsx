@@ -4,7 +4,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { AuthContext } from '../context/AuthContext';
 import { Box } from '@mui/material';
-import { motion } from 'framer-motion';
+import { CartProvider } from '../context/CartContext';
 
 const Layout = () => {
     const { signin } = useContext(AuthContext);
@@ -18,7 +18,7 @@ const Layout = () => {
     ]);
 
     const getRandomPosition = (size) => {
-        const maxX = window.innerWidth - size;        
+        const maxX = window.innerWidth - size;
         const maxY = window.innerHeight - size;
         const randomX = Math.random() * (maxX * 2) - maxX;
         const randomY = Math.random() * maxY;
@@ -51,6 +51,7 @@ const Layout = () => {
 
     return (
         <>
+
             <Header />
             <Box
                 sx={{
@@ -64,31 +65,6 @@ const Layout = () => {
                     overflow: 'hidden',
                 }}
             >
-                {/* {circles.map((circle) => (
-                    <motion.div
-                        key={circle.id}
-                        style={{
-                            position: 'absolute',
-                            width: circle.size + 'px',
-                            height: circle.size + 'px',
-                            borderRadius: '50%',
-                            backgroundColor: '#FFD700',
-                            opacity: circle.opacity,
-                        }}
-                        animate={{
-                            x: circle.x,
-                            y: circle.y,
-                            rotate: circle.rotate,
-                            scale: circle.scale,
-                        }}
-                        transition={{
-                            type: 'spring',
-                            stiffness: 100,
-                            damping: 10,
-                            bounce: 0.5,
-                        }}
-                    />
-                ))} */}
                 <Outlet />
             </Box>
             {!signin.userLoggedIn ? <Footer /> : null}

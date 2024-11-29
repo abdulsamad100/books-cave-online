@@ -48,6 +48,8 @@ const Card = ({
       : createdAt;
   const displayImage = photoURL || image || "https://via.placeholder.com/150";
 
+  
+
   return (
     <>
       <AnimatePresence>

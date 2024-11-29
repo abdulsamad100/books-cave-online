@@ -11,6 +11,8 @@ import Dashboard from './components/Dashboard';
 import IntroText from './components/IntroText';
 import AddNewBook from './components/AddNewBook';
 import MyBooks from './components/MyBooks';
+import { CartProvider } from './context/CartContext';
+import Cart from './components/Cart';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -20,6 +22,7 @@ const router = createBrowserRouter(
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="add-new-book" element={<AddNewBook />} />
         <Route path="mybooks" element={<MyBooks />} />
+        <Route path="cart" element={<Cart />} />
       </Route>
       <Route element={<Routechecker />}>
         <Route path="signup" element={<SignupForm />} />
@@ -32,9 +35,12 @@ const router = createBrowserRouter(
 
 function App() {
   return (
+
     <AuthProvider>
       <CustomThemeProvider >
+      <CartProvider>
         <RouterProvider router={router} />
+      </CartProvider>
       </CustomThemeProvider>
     </AuthProvider>
   );

@@ -14,8 +14,9 @@ import {
     ListItemButton,
     ListItemText,
     Divider,
+    Badge,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '../JS Files/Firebase';
@@ -24,11 +25,42 @@ import BookLogo from '../assets/Book-Logo.svg';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuIcon from '@mui/icons-material/Menu';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useCart } from '../context/CartContext';
 
 const Header = React.memo(() => {
     const { signin } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const { cartItemCount } = useCart();
+
+    const navigate=useNavigate();
+    // const cardQuantity = () => {
+    //     if (user) {
+    //         const cartQuery = query(
+    //             collection(db, 'Carts'),
+    //             where('createdFor', '==', user.uid)
+    //         );
+
+    //         const unsubscribe = onSnapshot(cartQuery, (querySnapshot) => {
+    //             let items = [];
+    //             let totalItemsCount = 0;
+
+    //             querySnapshot.forEach((doc) => {
+    //                 const cartData = doc.data();
+    //                 items = [...items, ...(cartData.items || [])];
+    //                 totalItemsCount += cartData.items?.length || 0;
+    //             });
+
+    //             setCartItems(items);
+    //             setCartItemCount(totalItemsCount);
+    //         });
+
+    //         return () => unsubscribe();
+    //     } else {
+    //         setCartItems([]);
+    //         setCartItemCount(0);
+    //     }
+    // }
 
     const isSmallScreen = useMediaQuery('(max-width:600px)');
 
@@ -166,8 +198,23 @@ const Header = React.memo(() => {
                                 <List>
                                     {signin.userLoggedIn && (
                                         <ListItemButton>
-                                            <ShoppingCartIcon />
+                                            <Badge
+                                                badgeContent={cartItemCount > 0 ? cartItemCount : '0'}
+                                                color="primary"
+                                                sx={{
+                                                    '& .MuiBadge-badge': {
+                                                        top: 4,
+                                                        right: 4,
+                                                        fontSize: '0.75rem',
+                                                        minWidth: '16px',
+                                                        height: '16px',
+                                                    },
+                                                }}
+                                            >
+                                                <ShoppingCartIcon />
+                                            </Badge>
                                         </ListItemButton>
+
                                     )}
                                     {signin.userLoggedIn ? (
                                         <>
@@ -311,10 +358,26 @@ const Header = React.memo(() => {
                                     width: '50px',
                                     '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.1)' },
                                 }}
+                                onClick={()=>navigate("/cart")}
                             >
-                                <ShoppingCartIcon />
+                                <Badge
+                                    badgeContent={cartItemCount} // Display badge only when cartItemCount > 0
+                                    color="primary"
+                                    sx={{
+                                        '& .MuiBadge-badge': {
+                                            top: 4,
+                                            right: 4,
+                                            fontSize: '0.75rem',
+                                            minWidth: '16px',
+                                            height: '16px',
+                                        },
+                                    }}
+                                >
+                                    <ShoppingCartIcon />
+                                </Badge>
                             </IconButton>
                         )}
+
                         {authButtons}
                     </Box>
                 )}
