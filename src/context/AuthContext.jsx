@@ -11,22 +11,32 @@ export const AuthContext = createContext({
 export const AuthProvider = ({ children }) => {
   const [signin, setSignin] = useState({ userLoggedIn: null });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null); // For handling any errors during auth
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setSignin({ userLoggedIn: user });
-      } else {
-        setSignin({ userLoggedIn: null });
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      (user) => {
+        if (user) {
+          setSignin({ userLoggedIn: user });
+        } else {
+          setSignin({ userLoggedIn: null });
+        }
+        setIsLoading(false);
+      },
+      (err) => {
+        // Handle errors if any (like network issues, etc.)
+        setError("Failed to authenticate, please try again.");
+        setIsLoading(false);
+        console.error(err);
       }
-      setIsLoading(false);
-    });
+    );
 
     return () => unsubscribe();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ signin, isLoading }}>
+    <AuthContext.Provider value={{ signin, isLoading, error }}>
       {isLoading ? (
         <div
           style={{
@@ -35,10 +45,23 @@ export const AuthProvider = ({ children }) => {
             alignItems: "center",
             height: "100vh",
             backgroundColor: "#000",
-            margin:"-8px"
+            margin: "-8px",
           }}
         >
-          <CircularProgress sx={{color:"#fff"}} />
+          <CircularProgress sx={{ color: "#fff" }} />
+        </div>
+      ) : error ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            color: "white",
+            backgroundColor: "#000",
+          }}
+        >
+          <p>{error}</p>
         </div>
       ) : (
         children

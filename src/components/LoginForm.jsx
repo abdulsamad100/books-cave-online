@@ -82,6 +82,7 @@ const LoginForm = () => {
               onChange={handleChange}
               margin="normal"
               variant="outlined"
+              autoComplete="current-password"
               sx={{
                 backgroundColor: theme === 'dark' ? '#555' : '#fff',
                 borderRadius: '8px',
@@ -104,6 +105,7 @@ const LoginForm = () => {
               onChange={handleChange}
               margin="normal"
               variant="outlined"
+              autoComplete="current-password"
               sx={{
                 backgroundColor: theme === 'dark' ? '#555' : '#fff',
                 borderRadius: '8px',

@@ -11,14 +11,26 @@ const CartContext = createContext();
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [cartItemCount, setCartItemCount] = useState(0);
-    const { signin } = useContext(AuthContext);
-    const [user, setUser] = useState(signin.userLoggedIn.uid);
+    const { signin, isLoading } = useContext(AuthContext);  // Destructure isLoading from AuthContext
 
-    // Fetch and listen for cart updates
+    const [user, setUser] = useState(null);  // Initialize user as null initially
+
+    // When signin changes, update the user state
     useEffect(() => {
+        if (signin.userLoggedIn) {
+            setUser(signin.userLoggedIn.uid);  // Set user when logged in
+        } else {
+            setUser(null);  // Clear user if logged out
+        }
+    }, [signin]);
+
+    // Fetch and listen for cart updates only if user is available
+    useEffect(() => {
+        if (!user) return;  // Don't fetch cart if there's no user
+
         const cartQuery = query(
             collection(db, 'Carts'),
-            where('createdFor', '==', signin.userLoggedIn.uid)
+            where('createdFor', '==', user)
         );
 
         const unsubscribe = onSnapshot(cartQuery, (querySnapshot) => {
@@ -36,12 +48,12 @@ export const CartProvider = ({ children }) => {
         });
 
         return () => unsubscribe();
-    }, [user]);
+    }, [user]);  // Dependency on user, to re-fetch cart when user changes
 
-    // useEffect(() => {
-    //     console.log('Cart Items Updated:', cartItems);
-    //     console.log('Cart Item Count Updated:', cartItemCount);
-    // }, [cartItems, cartItemCount]);
+    // If the user is still loading, don't render children
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <CartContext.Provider value={{ cartItems, cartItemCount }}>
