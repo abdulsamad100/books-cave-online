@@ -148,10 +148,10 @@ const Card = ({
                       <b>Stock:</b> {stock} items available
                     </Typography>
                     <Typography variant="body2">
-                      <b>Uploaded By: </b>{createdBy}
+                      <b>Uploaded by: </b>{createdBy}
                     </Typography>
                     <Typography variant="body2" color="text.primary">
-                      <b>Uploaded By: </b>{formattedDate}
+                      <b>Uploaded on: </b>{formattedDate}
                     </Typography>
                   </Box>
                 </Box>
