@@ -225,8 +225,6 @@ const MyBooks = () => {
                     ))}
                 </motion.div>
             )}
-
-            {/* Edit Modal */}
             <Modal open={editModalOpen} onClose={() => setEditModalOpen(false)}>
                 <Box
                     sx={{

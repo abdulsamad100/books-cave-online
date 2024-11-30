@@ -48,7 +48,16 @@ const Card = ({
       : createdAt;
   const displayImage = photoURL || image || "https://via.placeholder.com/150";
 
+  const buttonStyle = {
+    color: "#000",
+    backgroundColor: "#FFD700",
+    fontWeight: "bold",
+  }
 
+  const colors={
+    primary: "text.primary",
+    secondary: "text.secondary",
+  }
 
   return (
     <>
@@ -96,7 +105,7 @@ const Card = ({
                     zIndex: 1,
                   }}
                 >
-                <CloseIcon sx={{ color: "black", mixBlendMode: "difference" }} />
+                  <CloseIcon sx={{ color: "black", mixBlendMode: "difference" }} />
                 </IconButton>
                 <Box
                   sx={{
@@ -136,22 +145,22 @@ const Card = ({
                     <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
                       {title}
                     </Typography>
-                    <Typography variant="body2" color="text.primary">
+                    <Typography variant="body2" color={colors.primary}>
                       {details}
                     </Typography>
-                    <Typography variant="body2" color="text.primary">
+                    <Typography variant="body2" color={colors.primary}>
                       <b>Author:</b> {author}
                     </Typography>
-                    <Typography variant="body2" color="text.primary">
+                    <Typography variant="body2" color={colors.primary}>
                       <b>Category:</b> {category}
                     </Typography>
-                    <Typography variant="body2" color="text.primary">
+                    <Typography variant="body2" color={colors.primary}>
                       <b>Stock:</b> {stock} items available
                     </Typography>
                     <Typography variant="body2">
                       <b>Uploaded by: </b>{createdBy}
                     </Typography>
-                    <Typography variant="body2" color="text.primary">
+                    <Typography variant="body2" color={colors.primary}>
                       <b>Uploaded on: </b>{formattedDate}
                     </Typography>
                   </Box>
@@ -171,9 +180,7 @@ const Card = ({
                     variant="contained"
                     onClick={onAddToCart}
                     sx={{
-                      backgroundColor: "#FFD700",
-                      color: "#000",
-                      fontWeight: "bold",
+                      ...buttonStyle
                     }}
                   >
                     Add to Cart
@@ -230,22 +237,22 @@ const Card = ({
             </Typography>
             <Typography
               variant="body2"
-              color="text.secondary"
+              color={colors.secondary}
               sx={{ height: "37px", overflowY: "scroll" }}
             >
               {details}
             </Typography>
 
             <Box sx={{ mt: 2 }}>
-              <Typography variant="body2" color="text.primary">
+              <Typography variant="body2" color={colors.primary}>
                 Author: <b>{author}</b>
               </Typography>
-              <Typography variant="body2" color="text.primary">
+              <Typography variant="body2" color={colors.primary}>
                 Category: <b>{category}</b>
               </Typography>
               <Typography
                 variant="body2"
-                color="text.secondary"
+                color={colors.secondary}
                 sx={{ mt: "10px" }}
               >
                 {stock} items Available
@@ -275,9 +282,7 @@ const Card = ({
               color="primary"
               onClick={onAddToCart}
               sx={{
-                color: "#000",
-                backgroundColor: "#FFD700",
-                fontWeight: "bold",
+                ...buttonStyle,
                 fontSize: "13px",
               }}
             >

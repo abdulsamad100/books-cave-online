@@ -60,20 +60,6 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      event.preventDefault();
-      toast.error("You are about to leave the page. Your changes may not be saved.");
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
-
-
-  useEffect(() => {
     const booksRef = collection(db, "books");
     const booksQuery = query(booksRef, orderBy("createdAt", "desc"));
 

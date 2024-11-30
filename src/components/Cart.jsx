@@ -12,12 +12,14 @@ import { motion } from "framer-motion";
 import { collection, query, where, onSnapshot, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../JS Files/Firebase";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [removingItemId, setRemovingItemId] = useState(null); // Track the item being removed
+    const [removingItemId, setRemovingItemId] = useState(null);
     const user = auth.currentUser;
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (!user) return;
@@ -44,7 +46,7 @@ const Cart = () => {
     }, [user]);
 
     const handleDelete = async (itemId, productId) => {
-        setRemovingItemId(itemId); // Set the item being processed
+        setRemovingItemId(itemId);
         try {
             const productRef = doc(db, "books", productId);
             const productSnapshot = await getDoc(productRef);
@@ -59,12 +61,13 @@ const Cart = () => {
             }
 
             await deleteDoc(doc(db, "Carts", itemId));
-            toast.success("Item removed from cart and stock updated!");
+            toast.success("Item removed from Cart!");
         } catch (error) {
             console.error("Error deleting item:", error);
-            toast.error("Failed to remove the item.");
+
+            toast.error("Failed to remove the item. Try Reloading");
         } finally {
-            setRemovingItemId(null); // Clear the processing state
+            setRemovingItemId(null);
         }
     };
 
@@ -126,6 +129,7 @@ const Cart = () => {
                                 sx={{
                                     display: "flex",
                                     alignItems: "center",
+                                    justifyContent: "center",
                                     backgroundColor: "#333",
                                     color: "#fff",
                                     height: "140px",
@@ -160,7 +164,7 @@ const Cart = () => {
                                             "&:hover": { backgroundColor: "#ff3333" },
                                         }}
                                         onClick={() => handleDelete(item.id, item.productId)}
-                                        disabled={removingItemId === item.id} // Disable if being processed
+                                        disabled={removingItemId === item.id}
                                     >
                                         {removingItemId === item.id ? "Removing..." : "Remove"}
                                     </Button>
@@ -168,9 +172,30 @@ const Cart = () => {
                             </MuiCard>
                         </motion.div>
                     ))}
+
+                    {/* Center the Proceed to Payment button */}
+                    <Box sx={{ display: "flex", justifyContent: "center", width: "100%", marginTop: "20px" }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => navigate("/bill")}
+                            sx={{
+                                color: "#000",
+                                backgroundColor: "#FFD700",
+                                fontWeight: "bold",
+                                fontSize: "13px",
+                                alignItems: "center",
+                                textAlign: "center",
+                                cursor:"pointer"
+                            }}
+                        >
+                            Proceed to Payment
+                        </Button>
+                    </Box>
                 </motion.div>
             )}
         </Box>
+
     );
 };
 

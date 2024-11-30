@@ -13,6 +13,7 @@ import AddNewBook from './components/AddNewBook';
 import MyBooks from './components/MyBooks';
 import { CartProvider } from './context/CartContext';
 import Cart from './components/Cart';
+import Payment from './components/Payment';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
         <Route path="add-new-book" element={<AddNewBook />} />
         <Route path="mybooks" element={<MyBooks />} />
         <Route path="cart" element={<Cart />} />
+        <Route path="bill" element={<Payment />} />
       </Route>
       <Route element={<Routechecker />}>
         <Route path="signup" element={<SignupForm />} />
