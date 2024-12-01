@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     Box,
     Typography,
@@ -13,13 +13,31 @@ import { collection, query, where, onSnapshot, deleteDoc, doc, getDoc, updateDoc
 import { auth, db } from "../JS Files/Firebase";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { ThemeContext } from "../context/ThemeContext";
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.2,
+        },
+    },
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+};
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [removingItemId, setRemovingItemId] = useState(null);
+    const { theme } = useContext(ThemeContext);
+    const txtColor = {color:theme === 'light' ? '#fff' : "#000",transition:"0.5s"}
     const user = auth.currentUser;
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!user) return;
@@ -64,7 +82,6 @@ const Cart = () => {
             toast.success("Item removed from Cart!");
         } catch (error) {
             console.error("Error deleting item:", error);
-
             toast.error("Failed to remove the item. Try Reloading");
         } finally {
             setRemovingItemId(null);
@@ -81,7 +98,7 @@ const Cart = () => {
                     height: "70vh",
                 }}
             >
-                <CircularProgress />
+                <CircularProgress sx={{ color: "#FFD700" }} />
             </Box>
         );
     }
@@ -92,7 +109,8 @@ const Cart = () => {
                 variant="h4"
                 gutterBottom
                 sx={{
-                    color: "#FFD700",
+                    transition: "0.5s",
+                    color: theme === 'light' ? '#FFD700' : "#000",
                     marginTop: "80px",
                     textAlign: "center",
                     fontWeight: "bold",
@@ -110,12 +128,15 @@ const Cart = () => {
                         height: "50vh",
                     }}
                 >
-                    <Typography variant="h5" sx={{ color: "white" }}>
+                    <Typography variant="h5" sx={{ transition: "0.5s", color: theme === 'light' ? '#fff' : "#000" }}>
                         Your cart is empty.
                     </Typography>
                 </Box>
             ) : (
                 <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
                     style={{
                         display: "flex",
                         flexDirection: "column",
@@ -124,18 +145,19 @@ const Cart = () => {
                     }}
                 >
                     {cartItems.map((item) => (
-                        <motion.div key={item.id}>
+                        <motion.div key={item.id} variants={cardVariants}>
                             <MuiCard
                                 sx={{
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    backgroundColor: "#333",
+                                    backgroundColor: theme === 'light' ? '#333' : "#fff",
                                     color: "#fff",
                                     height: "140px",
                                     padding: "16px",
                                     width: "max-content",
                                     borderRadius: "15px",
+                                    gap:"10px"
                                 }}
                             >
                                 <CardMedia
@@ -149,11 +171,11 @@ const Cart = () => {
                                     alt={item.productName || "Product"}
                                 />
                                 <CardContent sx={{ flex: 1 }}>
-                                    <Typography variant="h6">{item.productName}</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                                    <Typography variant="h6" sx={{fontSize:"1.5rem",...txtColor}}>{item.productName}</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: "bold",...txtColor}}>
                                         Price: Rs. {item.productPrice}
                                     </Typography>
-                                    <Typography variant="body2">Quantity: {item.quantity}</Typography>
+                                    <Typography variant="body2" sx={{...txtColor}}>Quantity: {item.quantity}</Typography>
                                 </CardContent>
                                 <Box sx={{ marginLeft: "20px" }}>
                                     <Button
@@ -173,7 +195,6 @@ const Cart = () => {
                         </motion.div>
                     ))}
 
-                    {/* Center the Proceed to Payment button */}
                     <Box sx={{ display: "flex", justifyContent: "center", width: "100%", marginTop: "20px" }}>
                         <Button
                             variant="contained"
@@ -186,7 +207,7 @@ const Cart = () => {
                                 fontSize: "13px",
                                 alignItems: "center",
                                 textAlign: "center",
-                                cursor:"pointer"
+                                cursor: "pointer",
                             }}
                         >
                             Proceed to Payment
@@ -195,7 +216,6 @@ const Cart = () => {
                 </motion.div>
             )}
         </Box>
-
     );
 };
 

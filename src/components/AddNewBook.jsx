@@ -4,7 +4,7 @@ import uploadToCloudinary from "../JS Files/UploadToCloudinary";
 import { db } from "../JS Files/Firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { AuthContext } from "../context/AuthContext";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const AddNewBook = () => {
@@ -80,17 +80,14 @@ const AddNewBook = () => {
             setIsLoading(false);
         }
     };
-
     useEffect(() => {
-        // Cleanup toast notifications when the component unmounts
         return () => {
-            toast.dismiss();  // Dismiss any active toasts when navigating away from the page
+            toast.dismiss();
         };
     }, []);
 
     return (
-        <Container sx={{scale:0.9, width: "50vw", minWidth: "280px", padding: "25px", mb: 0, mt: "100px", bgcolor: "#fff", borderRadius: "10px" }}>
-            <Toaster />
+        <Container sx={{scale:0.9, width: "50vw", minWidth: "350px", padding: "25px", mb: 0, mt: "100px", bgcolor: "#fff", borderRadius: "10px" }}>
             <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold", textAlign: "center" }}>
                 Add New Book
             </Typography>
@@ -153,7 +150,7 @@ const AddNewBook = () => {
                             sx={{ width: "33vw" }}
                             required
                         />
-                        <Button variant="contained" component="label" sx={{ backgroundColor: "#FFD700", color: "#000", height: "50px" }}>
+                        <Button variant="contained" component="label" sx={{ backgroundColor: "#FFD700", color: "#000", height: "50px",fontWeight:"bold" }}>
                             Upload Image
                             <input type="file" hidden onChange={handleImageChange} />
                         </Button>
@@ -167,6 +164,7 @@ const AddNewBook = () => {
                         sx={{
                             backgroundColor: "#FFD700",
                             color: "#000",
+                            fontWeight:"bold",
                             "&:hover": { backgroundColor: "#FFC107" },
                         }}
                     >

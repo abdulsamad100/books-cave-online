@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Card as MuiCard,
   CardMedia,
@@ -13,6 +13,8 @@ import {
 import { styled } from "@mui/material/styles";
 import { motion, AnimatePresence } from "framer-motion";
 import CloseIcon from "@mui/icons-material/Close";
+import { ThemeContext } from "../context/ThemeContext";
+import { th } from "framer-motion/client";
 
 const ModalContent = styled(motion.div)(({ theme }) => ({
   backgroundColor: "#fff",
@@ -42,11 +44,12 @@ const Card = ({
   createdBy,
 }) => {
   const [IsCardOpen, setIsCardOpen] = useState(false);
-  const formattedDate =
-    createdAt && createdAt.seconds
-      ? new Date(createdAt.seconds * 1000).toLocaleDateString()
-      : createdAt;
+  const formattedDate = createdAt && createdAt.seconds
+    ? new Date(createdAt.seconds * 1000).toLocaleDateString() : createdAt;
   const displayImage = photoURL || image || "https://via.placeholder.com/150";
+
+  const { theme } = useContext(ThemeContext);
+  const txtColor = { color: theme === 'light' ? '#fff' : "#000", transition: "0.5s" }
 
   const buttonStyle = {
     color: "#000",
@@ -54,9 +57,9 @@ const Card = ({
     fontWeight: "bold",
   }
 
-  const colors={
-    primary: "text.primary",
-    secondary: "text.secondary",
+  const colors = {
+    primary: theme === "light" ? "#fff" : "#000",
+    bg: theme === "light" ? "#333" : "#fff",
   }
 
   return (
@@ -92,7 +95,8 @@ const Card = ({
                   height: { xs: "90vh", sm: "80vh", md: "max-content", lg: "max-content" },
                   padding: "15px",
                   transform: "translate(-50%, -50%)",
-                  overflow: "scroll",
+                  overflowY: "visible",
+                  bgcolor: colors.bg,
                 }}
               >
                 <IconButton
@@ -105,7 +109,7 @@ const Card = ({
                     zIndex: 1,
                   }}
                 >
-                  <CloseIcon sx={{ color: "black", mixBlendMode: "difference" }} />
+                  <CloseIcon sx={{ transition:"0.5s",color: colors.primary, mixBlendMode: "difference" }} />
                 </IconButton>
                 <Box
                   sx={{
@@ -142,7 +146,7 @@ const Card = ({
                       maxWidth: { xs: "100%", md: "60%" },
                     }}
                   >
-                    <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2 }}>
+                    <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2, transition:"0.5s",color: colors.primary }}>
                       {title}
                     </Typography>
                     <Typography variant="body2" color={colors.primary}>
@@ -157,7 +161,7 @@ const Card = ({
                     <Typography variant="body2" color={colors.primary}>
                       <b>Stock:</b> {stock} items available
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography variant="body2" color={colors.primary}>
                       <b>Uploaded by: </b>{createdBy}
                     </Typography>
                     <Typography variant="body2" color={colors.primary}>
@@ -173,7 +177,7 @@ const Card = ({
                     mt: 2,
                   }}
                 >
-                  <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333" }}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold", transition:"0.5s",color: colors.primary }}>
                     Rs. {price.toFixed(0)}
                   </Typography>
                   <Button
@@ -200,16 +204,17 @@ const Card = ({
       >
         <MuiCard
           sx={{
-            minWidth: 280,
-            maxWidth: { xs: "100%", sm: 280 },
+            width: 280,
             margin: "16px auto",
             pb: "15px",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
+            bgcolor: colors.bg,
             transition: "transform 0.3s ease, box-shadow 0.3s ease",
             "&:hover": {
               transform: "translateY(-5px)",
               boxShadow: "0 8px 12px rgba(0, 0, 0, 0.2)",
+              bgcolor: colors.bg,
             },
           }}
         >
@@ -229,7 +234,7 @@ const Card = ({
           <CardContent>
             <Typography
               variant="h5"
-              sx={{ fontWeight: "bold" }}
+              sx={{ fontWeight: "bold", transition:"0.5s",color: colors.primary }}
               component="div"
               gutterBottom
             >
@@ -237,11 +242,18 @@ const Card = ({
             </Typography>
             <Typography
               variant="body2"
-              color={colors.secondary}
-              sx={{ height: "37px", overflowY: "scroll" }}
+              color={colors.primary}
+              sx={{
+                height: "37px",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                width: "100%",
+              }}
             >
               {details}
             </Typography>
+
 
             <Box sx={{ mt: 2 }}>
               <Typography variant="body2" color={colors.primary}>
@@ -252,7 +264,7 @@ const Card = ({
               </Typography>
               <Typography
                 variant="body2"
-                color={colors.secondary}
+                color={colors.primary}
                 sx={{ mt: "10px" }}
               >
                 {stock} items Available
@@ -273,6 +285,7 @@ const Card = ({
                 fontWeight: "bold",
                 mr: "10px",
                 fontSize: "18px",
+                transition:"0.5s",color: colors.primary
               }}
             >
               Rs. {price.toFixed(0)}

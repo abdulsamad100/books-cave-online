@@ -5,14 +5,17 @@ import { collection, onSnapshot, doc, getDoc, updateDoc, setDoc, serverTimestamp
 import { db } from "../JS Files/Firebase";
 import Card from "./Card";
 import { motion } from "framer-motion";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { ThemeContext } from "../context/ThemeContext";
 
 const Dashboard = () => {
   const { signin, isLoading: authLoading } = useContext(AuthContext);
   const [firebaseData, setFirebaseData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [processingItemId, setProcessingItemId] = useState(null); // Track the item being processed
+  const [processingItemId, setProcessingItemId] = useState(null);
+  const { theme } = useContext(ThemeContext);
+  const txtColor = { color: theme === 'light' ? '#fff' : "#000", transition: "0.5s" }
 
   const navigate = useNavigate();
 
@@ -99,13 +102,13 @@ const Dashboard = () => {
 
   return (
     <>
-      <Toaster />
       <Box sx={{ padding: "16px" }}>
         <Typography
           variant="h4"
           gutterBottom
           sx={{
-            color: "#FFD700",
+            transition:"0.5s",
+            color: theme === "light" ? "#FFD700":"#000",
             marginTop: "80px",
             textAlign: "center",
             fontWeight: "bold",
@@ -123,7 +126,7 @@ const Dashboard = () => {
               height: "50vh",
             }}
           >
-            <Typography variant="h5" color="#fff">
+            <Typography variant="h5" sx={{...txtColor}}>
               All Books Are Sold. Please Come Again Later!
             </Typography>
           </Box>

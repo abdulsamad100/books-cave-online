@@ -3,7 +3,7 @@ import Layout from './components/Layout';
 import { AuthProvider } from './context/AuthContext';
 import Routechecker from './Routes/Routechecker';
 import AnotherChecker from './Routes/AnotherChecker';
-import CustomThemeProvider from './context/ThemeContext';
+import { ThemeProvider } from './context/ThemeContext';
 import NotFound from './components/NotFound';
 import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
@@ -39,11 +39,11 @@ function App() {
   return (
 
     <AuthProvider>
-      <CustomThemeProvider >
-      <CartProvider>
-        <RouterProvider router={router} />
-      </CartProvider>
-      </CustomThemeProvider>
+      <ThemeProvider >
+        <CartProvider>
+          <RouterProvider router={router} />
+        </CartProvider>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

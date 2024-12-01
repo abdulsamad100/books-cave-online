@@ -16,18 +16,22 @@ import {
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext';
 import { signOut } from 'firebase/auth';
 import { auth } from '../JS Files/Firebase';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import BookLogo from '../assets/Book-Logo.svg';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuIcon from '@mui/icons-material/Menu';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import BedtimeIcon from '@mui/icons-material/Bedtime';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useCart } from '../context/CartContext';
 
 const Header = React.memo(() => {
   const { signin } = useContext(AuthContext);
   const { cartItemCount } = useCart();
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
@@ -57,18 +61,39 @@ const Header = React.memo(() => {
         <>
           {['/dashboard', '/add-new-book', '/mybooks'].map((path, index) => (
             <Link to={path} key={index} style={{ textDecoration: 'none' }}>
-              <Button variant="outlined" sx={buttonStyles}> {path === '/dashboard' ? 'Explore' : path === '/add-new-book' ? 'Add New Book' : 'My Books'} </Button>
+              <Button variant="outlined" sx={buttonStyles}>
+                {path === '/dashboard'
+                  ? 'Explore'
+                  : path === '/add-new-book'
+                    ? 'Add New Book'
+                    : 'My Books'}
+              </Button>
             </Link>
           ))}
           <IconButton onClick={handleMenuOpen}>
-            <Avatar alt={signin.userLoggedIn?.displayName || 'User'} src={signin.userLoggedIn?.photoURL || ''} sx={{ width: 30, height: 30 }} />
+            <Avatar
+              alt={signin.userLoggedIn?.displayName || 'User'}
+              src={signin.userLoggedIn?.photoURL || ''}
+              sx={{ width: 30, height: 30 }}
+            />
           </IconButton>
-          <Menu open={Boolean(anchorEl)} onClose={handleMenuClose} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
+          <Menu
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
             <Box sx={{ textAlign: 'center', p: 2 }}>
-              <Avatar alt={signin.userLoggedIn?.displayName} src={signin.userLoggedIn?.photoURL || ''} sx={{ width: 100, height: 100, mb: 1 }} />
+              <Avatar
+                alt={signin.userLoggedIn?.displayName}
+                src={signin.userLoggedIn?.photoURL || ''}
+                sx={{ width: 100, height: 100, mb: 1 }}
+              />
               <Typography variant="body1">{signin.userLoggedIn?.displayName || 'User Name'}</Typography>
               <Typography variant="body2">{signin.userLoggedIn?.email || 'Email'}</Typography>
-              <Button variant="outlined" sx={buttonStyles} onClick={Signout}>Signout</Button>
+              <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
+                Signout
+              </Button>
             </Box>
           </Menu>
         </>
@@ -76,53 +101,107 @@ const Header = React.memo(() => {
     }
     return (
       <>
-        <Link to="/signup" style={{ textDecoration: 'none' }}><Button variant="outlined" sx={buttonStyles}>Signup</Button></Link>
-        <Link to="/login" style={{ textDecoration: 'none' }}><Button variant="outlined" sx={buttonStyles}>Login</Button></Link>
+        <Link to="/signup" style={{ textDecoration: 'none' }}>
+          <Button variant="outlined" sx={buttonStyles}>
+            Signup
+          </Button>
+        </Link>
+        <Link to="/login" style={{ textDecoration: 'none' }}>
+          <Button variant="outlined" sx={buttonStyles}>
+            Login
+          </Button>
+        </Link>
       </>
     );
   }, [signin.userLoggedIn, anchorEl, handleMenuClose, Signout]);
 
   return (
     <AppBar position="absolute" sx={appBarStyles}>
-      <Toaster />
       <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <Link to="/dashboard" style={{ textDecoration: 'none' }}>
           <Typography variant="h6" sx={logoStyles}>
-            <img src={BookLogo} alt="Book Logo" style={{ height: '40px', marginRight: '8px' }} /> Online Library
+            <img
+              src={BookLogo}
+              alt="Book Logo"
+              style={{ height: '40px', marginRight: '8px' }}
+            />
+            Online Library
           </Typography>
         </Link>
         {isSmallScreen ? (
           <>
-            <IconButton onClick={toggleDrawer(true)} sx={{ color: '#000' }}><MenuIcon /></IconButton>
+            <IconButton onClick={toggleDrawer(true)} sx={{ color: '#000', }}>
+              <MenuIcon />
+            </IconButton>
             <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
-              <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)} onKeyDown={toggleDrawer(false)}>
-                <List>
-                  {signin.userLoggedIn && (
-                    <ListItemButton>
-                      <Badge badgeContent={cartItemCount || '0'} color="primary" sx={{ '& .MuiBadge-badge': badgeStyles }}>
-                        <ShoppingCartIcon />
-                      </Badge>
-                    </ListItemButton>
-                  )}
-                  {signin.userLoggedIn ? authButtons : (
-                    <>
-                      <ListItemButton component={Link} to="/login"><ListItemText primary="Login" /></ListItemButton>
-                      <ListItemButton component={Link} to="/signup"><ListItemText primary="Signup" /></ListItemButton>
-                    </>
-                  )}
+              <Box
+                sx={{ width: "max-content" }}
+                role="presentation"
+                onClick={toggleDrawer(false)}
+                onKeyDown={toggleDrawer(false)}
+              >
+                <List
+                  sx={{ display: "flex", flexDirection: "column", margin: "20px", gap: "20px", alignItems: "end" }}>
+                  <>
+
+                    <IconButton
+                      onClick={toggleTheme}
+                      sx={{ color: '#000' }}
+                    >
+                      {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
+                    </IconButton>
+
+                    {signin.userLoggedIn && (
+                      <IconButton
+                        sx={{ color: '#', }}
+                        onClick={() => navigate('/cart')}
+                      >
+                        <Badge
+                          badgeContent={cartItemCount}
+                          color="primary"
+                          sx={{ color: "#000" }}
+                        >
+                          <ShoppingCartIcon />
+                        </Badge>
+                      </IconButton>
+                    )}
+                    {signin.userLoggedIn ? (
+                      authButtons
+                    ) : (
+                      <>
+                        <ListItemButton component={Link} to="/login">
+                          <ListItemText primary="Login" />
+                        </ListItemButton>
+                        <ListItemButton component={Link} to="/signup">
+                          <ListItemText primary="Signup" />
+                        </ListItemButton>
+                      </>
+                    )}
+                  </>
                 </List>
               </Box>
             </Drawer>
           </>
         ) : (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {signin.userLoggedIn && (
-              <IconButton sx={{ color: '#000' }} onClick={() => navigate("/cart")}>
-                <Badge badgeContent={cartItemCount} color="primary" sx={{ '& .MuiBadge-badge': badgeStyles }}>
-                  <ShoppingCartIcon />
-                </Badge>
-              </IconButton>
-            )}
+            <IconButton
+              sx={{ color: '#' }}
+              onClick={() => navigate('/cart')}
+            >
+              <Badge
+                badgeContent={cartItemCount}
+                color="primary"
+                sx={{ color: "#000" }}
+              >
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+            <IconButton
+              onClick={toggleTheme}
+              sx={{ color: '#000' }}
+            >
+              {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
+            </IconButton>
             {authButtons}
           </Box>
         )}

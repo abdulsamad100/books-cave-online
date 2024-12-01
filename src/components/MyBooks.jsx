@@ -9,16 +9,13 @@ import {
     CircularProgress,
     Modal,
     TextField,
-    InputLabel,
-    MenuItem,
-    Select,
-    FormControl,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext";
 import { collection, onSnapshot, deleteDoc, doc, query, where, updateDoc } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import toast from "react-hot-toast";
+import { ThemeContext } from "../context/ThemeContext"; // Import ThemeContext
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -41,6 +38,9 @@ const MyBooks = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
+
+    const { theme } = useContext(ThemeContext); // Access theme
+    const txtColor = { color: theme === 'light' ? '#fff' : '#000', transition: '0.5s' }; // Dynamic text color
 
     useEffect(() => {
         if (!signin?.userLoggedIn?.displayName) return;
@@ -114,7 +114,7 @@ const MyBooks = () => {
                     height: "70vh",
                 }}
             >
-                <CircularProgress sx={{ color: "#fff" }} />
+                <CircularProgress sx={{ color: theme === 'light' ? "#FFD700" : "#fff" }} />
             </Box>
         );
     }
@@ -125,10 +125,11 @@ const MyBooks = () => {
                 variant="h4"
                 gutterBottom
                 sx={{
-                    color: "#FFD700",
+                    color: theme === 'light' ? "#FFD700" : "#000",
                     marginTop: "80px",
                     textAlign: "center",
                     fontWeight: "bold",
+                    transition: "0.5s",
                 }}
             >
                 My Books
@@ -143,7 +144,7 @@ const MyBooks = () => {
                         height: "50vh",
                     }}
                 >
-                    <Typography variant="h5" color="#fff">
+                    <Typography variant="h5" sx={{ color: theme === 'light' ? '#fff' : "#000", transition: "0.5s" }}>
                         You have not added any books yet.
                     </Typography>
                 </Box>
@@ -160,23 +161,30 @@ const MyBooks = () => {
                                 sx={{
                                     display: "flex",
                                     alignItems: "center",
-                                    backgroundColor: "#333",
+                                    backgroundColor: theme === 'light' ? "#333" : "#fff",
                                     color: "#fff",
                                     height: "140px",
                                     padding: "16px",
                                     width: "max-content",
                                     borderRadius: "15px",
+                                    gap: "10px"
                                 }}
                             >
                                 <CardMedia
                                     component="img"
-                                    sx={{ width: "135px", height: "135px", borderRadius: "10px" }}
+                                    sx={{
+                                        width: "135px",
+                                        height: "135px",
+                                        borderRadius: "10px",
+                                    }}
                                     image={book.photoURL || "https://via.placeholder.com/150"}
                                     alt={book.title}
                                 />
                                 <CardContent sx={{ flex: 1 }}>
-                                    <Typography variant="h6">{book.title}</Typography>
-                                    <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                                    <Typography variant="h6" sx={{ fontSize: "1.5rem", ...txtColor }}>
+                                        {book.title}
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: "bold", ...txtColor }}>
                                         {book.author}
                                     </Typography>
                                     <Typography
@@ -186,14 +194,17 @@ const MyBooks = () => {
                                             width: "25vw",
                                             height: "40px",
                                             overflow: "hidden",
+                                            ...txtColor,
                                         }}
                                     >
                                         {book.details}
                                     </Typography>
-                                    <Typography variant="body2" sx={{ mt: 1 }}>
+                                    <Typography variant="body2" sx={{ mt: 1, ...txtColor }}>
                                         Price: Rs. {book.price}
                                     </Typography>
-                                    <Typography variant="body2">Stock: {book.stock}</Typography>
+                                    <Typography variant="body2" sx={{ ...txtColor }}>
+                                        Stock: {book.stock}
+                                    </Typography>
                                 </CardContent>
                                 <Box sx={{ display: "flex", flexDirection: "column", marginLeft: "20px" }}>
                                     <Button
@@ -226,6 +237,7 @@ const MyBooks = () => {
                 </motion.div>
             )}
             <Modal open={editModalOpen} onClose={() => setEditModalOpen(false)}>
+                
                 <Box
                     sx={{
                         backgroundColor: "#fff",
@@ -276,20 +288,13 @@ const MyBooks = () => {
                         onChange={(e) => setSelectedBook({ ...selectedBook, stock: Number(e.target.value) })}
                         fullWidth
                     />
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, }}>
-                        <Button onClick={() => setEditModalOpen(false)} 
-                        sx={{
-                            color: "#FF0000",
-                            "&:hover": { backgroundColor: "#FF0000", color: "white" },
-                        }}>Cancel</Button>
-                        <Button variant="contained" sx={{
-                            backgroundColor: "#FFD700",
-                            color: "#000",
-                            "&:hover": { backgroundColor: "#FFC107" },
-                        }} onClick={handleEditSave}>
-                            Save
-                        </Button>
-                    </Box>
+                    <Button
+                        variant="contained"
+                        onClick={handleEditSave}
+                        sx={{ color:"#000", marginTop: 2, backgroundColor: "#FFD700" }}
+                    >
+                        Save
+                    </Button>
                 </Box>
             </Modal>
         </Box>

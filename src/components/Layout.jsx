@@ -4,62 +4,24 @@ import Header from './Header';
 import Footer from './Footer';
 import { AuthContext } from '../context/AuthContext';
 import { Box } from '@mui/material';
-import { CartProvider } from '../context/CartContext';
+import { Toaster } from 'react-hot-toast';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Layout = () => {
     const { signin } = useContext(AuthContext);
-    const [circles, setCircles] = useState([
-        { id: 1, x: 0, y: 0, size: 200, opacity: 0.3 },
-        { id: 2, x: 0, y: 0, size: 150, opacity: 0.4 },
-        { id: 3, x: 0, y: 0, size: 100, opacity: 0.2 },
-        { id: 4, x: 0, y: 0, size: 250, opacity: 0.5 },
-        { id: 5, x: 0, y: 0, size: 120, opacity: 0.3 },
-        { id: 6, x: 0, y: 0, size: 180, opacity: 0.4 },
-    ]);
-
-    const getRandomPosition = (size) => {
-        const maxX = window.innerWidth - size;
-        const maxY = window.innerHeight - size;
-        const randomX = Math.random() * (maxX * 2) - maxX;
-        const randomY = Math.random() * maxY;
-        return {
-            x: randomX,
-            y: randomY,
-        };
-    };
-
-    const getRandomRotationAndScale = () => {
-        return {
-            rotate: Math.random() * 360,
-            scale: 0.5 + Math.random(),
-        };
-    };
-
-    useEffect(() => {
-        const moveCircles = () => {
-            setCircles((prevCircles) =>
-                prevCircles.map((circle) => {
-                    const { x, y } = getRandomPosition(circle.size);
-                    const { rotate, scale } = getRandomRotationAndScale();
-                    return { ...circle, x, y, rotate, scale };
-                })
-            );
-        };
-        const interval = setInterval(moveCircles, 3000);
-        return () => clearInterval(interval);
-    }, []);
-
+    const { theme, toggleTheme } = useContext(ThemeContext);
     return (
         <>
-
+            <Toaster />
             <Header />
             <Box
                 sx={{
+                    transition:"0.5s",
                     minHeight: '100vh',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: '#000',
+                    backgroundColor:  theme === 'light' ? '#000' : '#fff',
                     position: 'relative',
                     margin: "-8px",
                     overflow: 'hidden',

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Container, TextField, Button, Typography, Link } from '@mui/material';
 import { auth } from '../JS Files/Firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { ThemeContext } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -29,7 +29,7 @@ const LoginForm = () => {
 
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      toast.dismiss(loadingToast);
+      toast.success('LoggedIn Successfully', { id: loadingToast });
       navigate("/dashboard");
     } catch (error) {
       toast.dismiss(loadingToast);
@@ -69,7 +69,6 @@ const LoginForm = () => {
           transform: 'translate(-50%, -50%)',
         }}
       >
-        <Toaster />
         <Typography variant="h5" gutterBottom
           sx={{ fontWeight: 'bold', color: '#2E3B55' }}
         >
