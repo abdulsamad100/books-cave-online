@@ -48,8 +48,6 @@ const Card = ({
   const displayImage = photoURL || image || "https://via.placeholder.com/150";
 
   const { theme } = useContext(ThemeContext);
-  const txtColor = { color: theme === 'light' ? '#fff' : "#000", transition: "0.5s" }
-
   const buttonStyle = {
     color: "#000",
     backgroundColor: "#FFD700",
@@ -206,7 +204,7 @@ const Card = ({
             width: 280,
             margin: "16px auto",
             pb: "15px",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 0px 10px rgba(0, 0, 0, 0.3)",
             borderRadius: "8px",
             bgcolor: colors.bg,
             transition: "transform 0.3s ease, box-shadow 0.3s ease",

@@ -20,7 +20,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   const addToCart = async (userId, item) => {
-    setProcessingItemId(item.id); // Set the current item being processed
+    setProcessingItemId(item.id);
     try {
       const productRef = doc(db, "books", item.id);
       const productSnapshot = await getDoc(productRef);
@@ -58,7 +58,7 @@ const Dashboard = () => {
       toast.error("Error adding product to cart. Please try again.");
       console.error("Error adding product to cart: ", error);
     } finally {
-      setProcessingItemId(null); // Reset the processing state
+      setProcessingItemId(null);
     }
   };
 
@@ -164,12 +164,12 @@ const Dashboard = () => {
                     photoURL={item.photoURL ?? "https://via.placeholder.com/150"}
                     onAddToCart={async (e) => {
                       e.stopPropagation();
-                      if (processingItemId === item.id) return; // Prevent duplicate clicks
+                      if (processingItemId === item.id) return;
                       const loadingToast = toast.loading("Adding to cart...");
                       await addToCart(signin.userLoggedIn.uid, item);
                       toast.dismiss(loadingToast);
                     }}
-                    disabled={processingItemId === item.id} // Disable button while processing
+                    disabled={processingItemId === item.id}
                   />
                 </motion.div>
               )

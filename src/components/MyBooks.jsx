@@ -15,7 +15,7 @@ import { AuthContext } from "../context/AuthContext";
 import { collection, onSnapshot, deleteDoc, doc, query, where, updateDoc } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import toast from "react-hot-toast";
-import { ThemeContext } from "../context/ThemeContext"; // Import ThemeContext
+import { ThemeContext } from "../context/ThemeContext";
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -39,8 +39,8 @@ const MyBooks = () => {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedBook, setSelectedBook] = useState(null);
 
-    const { theme } = useContext(ThemeContext); // Access theme
-    const txtColor = { color: theme === 'light' ? '#fff' : '#000', transition: '0.5s' }; // Dynamic text color
+    const { theme } = useContext(ThemeContext);
+    const txtColor = { color: theme === 'light' ? '#fff' : '#000', transition: '0.5s' };
 
     useEffect(() => {
         if (!signin?.userLoggedIn?.displayName) return;
