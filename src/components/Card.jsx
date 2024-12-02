@@ -14,7 +14,6 @@ import { styled } from "@mui/material/styles";
 import { motion, AnimatePresence } from "framer-motion";
 import CloseIcon from "@mui/icons-material/Close";
 import { ThemeContext } from "../context/ThemeContext";
-import { th } from "framer-motion/client";
 
 const ModalContent = styled(motion.div)(({ theme }) => ({
   backgroundColor: "#fff",

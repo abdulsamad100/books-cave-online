@@ -29,7 +29,7 @@ const rowVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-const MotionTableRow = motion(TableRow); // Create a motion-enhanced TableRow
+const MotionTableRow = motion.create(TableRow);
 
 const Payment = () => {
   const { signin } = useContext(AuthContext);

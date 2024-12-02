@@ -3,9 +3,9 @@ import { Container, TextField, Button, Typography, Link } from '@mui/material';
 import { auth } from '../JS Files/Firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import toast from 'react-hot-toast';
-import { ThemeContext } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ThemeContext } from "../context/ThemeContext";
 
 const LoginForm = () => {
   const { theme } = useContext(ThemeContext);
@@ -14,6 +14,15 @@ const LoginForm = () => {
     email: '',
     password: '',
   });
+
+  const textFieldStyles = {
+    containerBg: theme === 'light' ? '#333' : '#fff',
+    textFieldBg: theme === 'light' ? '#444' : '#f9f9f9',
+    textColor: theme === 'light' ? '#fff' : '#000',
+    labelColor: theme === 'light' ? '#aaa' : '#666',
+    buttonBg: '#FFD700',
+    buttonTextColor: '#000',
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +63,7 @@ const LoginForm = () => {
     >
       <Container
         sx={{
-          backgroundColor: '#fff',
+          backgroundColor: textFieldStyles.containerBg,
           borderRadius: 4,
           boxShadow: 5,
           minWidth: 260,
@@ -67,10 +76,13 @@ const LoginForm = () => {
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
+          color: textFieldStyles.textColor,
         }}
       >
-        <Typography variant="h5" gutterBottom
-          sx={{ fontWeight: 'bold', color: '#2E3B55' }}
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{ fontWeight: 'bold', color: theme === 'light' ? '#FFD700' :'#000' }}
         >
           Login
         </Typography>
@@ -92,8 +104,14 @@ const LoginForm = () => {
               variant="outlined"
               autoComplete="current-password"
               sx={{
-                backgroundColor: theme === 'dark' ? '#555' : '#fff',
+                backgroundColor: textFieldStyles.textFieldBg,
                 borderRadius: '8px',
+                '& .MuiInputBase-input': {
+                  color: textFieldStyles.textColor,
+                },
+                '& .MuiInputLabel-root': {
+                  color: textFieldStyles.labelColor,
+                },
               }}
             />
           </motion.div>
@@ -115,8 +133,14 @@ const LoginForm = () => {
               variant="outlined"
               autoComplete="current-password"
               sx={{
-                backgroundColor: theme === 'dark' ? '#555' : '#fff',
+                backgroundColor: textFieldStyles.textFieldBg,
                 borderRadius: '8px',
+                '& .MuiInputBase-input': {
+                  color: textFieldStyles.textColor,
+                },
+                '& .MuiInputLabel-root': {
+                  color: textFieldStyles.labelColor,
+                },
               }}
             />
           </motion.div>
@@ -135,10 +159,10 @@ const LoginForm = () => {
                 mt: 2,
                 py: 1.2,
                 fontWeight: 'bold',
-                backgroundColor: theme === 'dark' ? '#FFD700' : '#FFD700',
-                color: '#000',
+                backgroundColor: textFieldStyles.buttonBg,
+                color: textFieldStyles.buttonTextColor,
                 '&:hover': {
-                  backgroundColor: theme === 'dark' ? '#FFC400' : '#FFC400',
+                  backgroundColor: textFieldStyles.hoverBg,
                 },
               }}
             >
@@ -154,14 +178,14 @@ const LoginForm = () => {
         >
           <Typography
             variant="body2"
-            sx={{ mt: 2, color: theme === 'dark' ? '#aaa' : '#666' }}
+            sx={{ mt: 2, color: textFieldStyles.labelColor }}
           >
             Don't have an account?{' '}
             <Link
               onClick={() => navigate('/signup')}
               style={{
                 cursor: 'pointer',
-                color: theme === 'dark' ? '#FFD700' : '#FFD700',
+                color: theme === 'dark' ? '#000' : '#FFD700',
               }}
             >
               Sign Up
