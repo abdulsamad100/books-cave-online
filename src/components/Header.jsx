@@ -65,8 +65,8 @@ const Header = React.memo(() => {
                 {path === '/dashboard'
                   ? 'Explore'
                   : path === '/add-new-book'
-                    ? 'Add New Book'
-                    : 'My Books'}
+                  ? 'Add New Book'
+                  : 'My Books'}
               </Button>
             </Link>
           ))}
@@ -89,8 +89,12 @@ const Header = React.memo(() => {
                 src={signin.userLoggedIn?.photoURL || ''}
                 sx={{ width: 100, height: 100, mb: 1 }}
               />
-              <Typography variant="body1">{signin.userLoggedIn?.displayName || 'User Name'}</Typography>
-              <Typography variant="body2">{signin.userLoggedIn?.email || 'Email'}</Typography>
+              <Typography variant="body1">
+                {signin.userLoggedIn?.displayName || 'User Name'}
+              </Typography>
+              <Typography variant="body2">
+                {signin.userLoggedIn?.email || 'Email'}
+              </Typography>
               <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
                 Signout
               </Button>
@@ -130,36 +134,38 @@ const Header = React.memo(() => {
         </Link>
         {isSmallScreen ? (
           <>
-            <IconButton onClick={toggleDrawer(true)} sx={{ color: '#000', }}>
+            <IconButton onClick={toggleDrawer(true)} sx={{ color: '#000' }}>
               <MenuIcon />
             </IconButton>
             <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
               <Box
-                sx={{ width: "max-content" }}
+                sx={{ width: 'max-content' }}
                 role="presentation"
                 onClick={toggleDrawer(false)}
                 onKeyDown={toggleDrawer(false)}
               >
                 <List
-                  sx={{ display: "flex", flexDirection: "column", margin: "20px", gap: "20px", alignItems: "end" }}>
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    margin: '20px',
+                    gap: '20px',
+                    alignItems: 'end',
+                  }}
+                >
                   <>
-
-                    <IconButton
-                      onClick={toggleTheme}
-                      sx={{ color: '#000' }}
-                    >
+                    <IconButton onClick={toggleTheme} sx={{ color: '#000' }}>
                       {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
                     </IconButton>
-
                     {signin.userLoggedIn && (
                       <IconButton
-                        sx={{ color: '#', }}
+                        sx={{ color: '#000' }}
                         onClick={() => navigate('/cart')}
                       >
                         <Badge
                           badgeContent={cartItemCount}
                           color="primary"
-                          sx={{ color: "#000" }}
+                          sx={{ color: '#000' }}
                         >
                           <ShoppingCartIcon />
                         </Badge>
@@ -184,22 +190,18 @@ const Header = React.memo(() => {
           </>
         ) : (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <IconButton
-              sx={{ color: '#' }}
-              onClick={() => navigate('/cart')}
-            >
-              <Badge
-                badgeContent={cartItemCount}
-                color="primary"
-                sx={{ color: "#000" }}
-              >
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              onClick={toggleTheme}
-              sx={{ color: '#000' }}
-            >
+            {signin.userLoggedIn && (
+              <IconButton sx={{ color: '#000' }} onClick={() => navigate('/cart')}>
+                <Badge
+                  badgeContent={cartItemCount}
+                  color="primary"
+                  sx={{ color: '#000' }}
+                >
+                  <ShoppingCartIcon />
+                </Badge>
+              </IconButton>
+            )}
+            <IconButton onClick={toggleTheme} sx={{ color: '#000' }}>
               {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
             </IconButton>
             {authButtons}
@@ -236,14 +238,6 @@ const buttonStyles = {
   color: '#000',
   fontWeight: 'bold',
   '&:hover': { backgroundColor: '#fff' },
-};
-
-const badgeStyles = {
-  top: 4,
-  right: 4,
-  fontSize: '0.75rem',
-  minWidth: '16px',
-  height: '16px',
 };
 
 export default Header;
