@@ -14,6 +14,7 @@ import MyBooks from './components/MyBooks';
 import { CartProvider } from './context/CartContext';
 import Cart from './components/Cart';
 import Payment from './components/Payment';
+import History from './components/History';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
       <Route element={<AnotherChecker />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="add-new-book" element={<AddNewBook />} />
+        <Route path="history" element={<History />} />
         <Route path="mybooks" element={<MyBooks />} />
         <Route path="cart" element={<Cart />} />
         <Route path="bill" element={<Payment />} />

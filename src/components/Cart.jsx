@@ -155,7 +155,7 @@ const Cart = () => {
                                     color: "#fff",
                                     height: "140px",
                                     padding: "16px",
-                                    width: "max-content",
+                                    width: {xl:"max-content",lg:"max-content",sm:"max-content", xs: "90vw"},
                                     borderRadius: "15px",
                                     gap:"10px"
                                 }}

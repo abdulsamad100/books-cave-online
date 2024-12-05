@@ -10,7 +10,6 @@ import {
   Drawer,
   List,
   ListItemButton,
-  Badge,
   Box,
   ListItemText,
 } from '@mui/material';
@@ -26,16 +25,17 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import HistoryIcon from '@mui/icons-material/History';
 import { useCart } from '../context/CartContext';
 
-const Header = React.memo(() => {
+const Header = () => {
   const { signin } = useContext(AuthContext);
   const { cartItemCount } = useCart();
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
-  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const isSmallScreen = useMediaQuery('(max-width:750px)');
 
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
@@ -65,18 +65,11 @@ const Header = React.memo(() => {
                 {path === '/dashboard'
                   ? 'Explore'
                   : path === '/add-new-book'
-                  ? 'Add New Book'
-                  : 'My Books'}
+                    ? 'Add New Book'
+                    : 'My Books'}
               </Button>
             </Link>
           ))}
-          <IconButton onClick={handleMenuOpen}>
-            <Avatar
-              alt={signin.userLoggedIn?.displayName || 'User'}
-              src={signin.userLoggedIn?.photoURL || ''}
-              sx={{ width: 30, height: 30 }}
-            />
-          </IconButton>
           <Menu
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
@@ -132,47 +125,69 @@ const Header = React.memo(() => {
             Online Library
           </Typography>
         </Link>
-        {isSmallScreen ? (
-          <>
-            <IconButton onClick={toggleDrawer(true)} sx={{ color: '#000' }}>
-              <MenuIcon />
-            </IconButton>
-            <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
-              <Box
-                sx={{ width: 'max-content' }}
-                role="presentation"
-                onClick={toggleDrawer(false)}
-                onKeyDown={toggleDrawer(false)}
-              >
-                <List
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    margin: '20px',
-                    gap: '20px',
-                    alignItems: 'end',
+        <Box>
+          {isSmallScreen ? (
+            <>
+              {signin.userLoggedIn ? (
+                <IconButton
+                  onClick={(e) => {
+                    handleMenuOpen(e); // Open the profile menu
+                    setDrawerOpen(false); // Close the drawer when the profile icon is clicked
                   }}
                 >
-                  <>
-                    <IconButton onClick={toggleTheme} sx={{ color: '#000' }}>
-                      {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
-                    </IconButton>
-                    {signin.userLoggedIn && (
-                      <IconButton
-                        sx={{ color: '#000' }}
-                        onClick={() => navigate('/cart')}
-                      >
-                        <Badge
-                          badgeContent={cartItemCount}
-                          color="primary"
-                          sx={{ color: '#000' }}
-                        >
-                          <ShoppingCartIcon />
-                        </Badge>
+                  <Avatar
+                    alt={signin.userLoggedIn?.displayName || 'User'}
+                    src={signin.userLoggedIn?.photoURL || ''}
+                    sx={{ width: 30, height: 30 }}
+                  />
+                </IconButton>
+              ) : null}
+
+              <IconButton onClick={toggleDrawer(true)} sx={{ color: '#000' }}>
+                <MenuIcon />
+              </IconButton>
+
+              <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
+                <Box
+                  sx={{ width: 'max-content' }}
+                  role="presentation"
+                  onClick={toggleDrawer(false)}
+                  onKeyDown={toggleDrawer(false)}
+                >
+                  <List
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      margin: '20px',
+                      gap: '20px',
+                      alignItems: 'end',
+                    }}
+                  >
+                    <Box>
+                      <IconButton onClick={toggleTheme} sx={{ color: '#000' }}>
+                        {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
                       </IconButton>
-                    )}
+                      {signin.userLoggedIn && (
+                        <>
+                          <IconButton
+                            sx={{ color: '#000' }}
+                            onClick={() => navigate('/cart')}
+                          >
+                            <ShoppingCartIcon />
+                          </IconButton>
+                          <IconButton
+                            sx={{ color: '#000' }}
+                            onClick={() => navigate('/history')}
+                          >
+                            <HistoryIcon />
+                          </IconButton>
+                        </>
+                      )}
+                    </Box>
                     {signin.userLoggedIn ? (
-                      authButtons
+                      <>
+                        {authButtons}
+                      </>
                     ) : (
                       <>
                         <ListItemButton component={Link} to="/login">
@@ -183,34 +198,91 @@ const Header = React.memo(() => {
                         </ListItemButton>
                       </>
                     )}
-                  </>
-                </List>
-              </Box>
-            </Drawer>
-          </>
-        ) : (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {signin.userLoggedIn && (
-              <IconButton sx={{ color: '#000' }} onClick={() => navigate('/cart')}>
-                <Badge
-                  badgeContent={cartItemCount}
-                  color="primary"
-                  sx={{ color: '#000' }}
-                >
-                  <ShoppingCartIcon />
-                </Badge>
+                  </List>
+                </Box>
+              </Drawer>
+
+              {/* Profile Menu */}
+              <Menu
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorEl={anchorEl} // Ensures the menu opens at the correct position
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              >
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Avatar
+                    alt={signin.userLoggedIn?.displayName}
+                    src={signin.userLoggedIn?.photoURL || ''}
+                    sx={{ width: 100, height: 100, mb: 1 }}
+                  />
+                  <Typography variant="body1">
+                    {signin.userLoggedIn?.displayName || 'User Name'}
+                  </Typography>
+                  <Typography variant="body2">
+                    {signin.userLoggedIn?.email || 'Email'}
+                  </Typography>
+                  <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
+                    Signout
+                  </Button>
+                </Box>
+              </Menu>
+            </>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {signin.userLoggedIn && (
+                <>
+                  <IconButton sx={{ color: '#000' }} onClick={() => navigate('/cart')}>
+                    <ShoppingCartIcon />
+                  </IconButton>
+                  <IconButton sx={{ color: '#000' }} onClick={() => navigate('/history')}>
+                    <HistoryIcon />
+                  </IconButton>
+                </>
+              )}
+              <IconButton onClick={toggleTheme} sx={{ color: '#000' }}>
+                {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
               </IconButton>
-            )}
-            <IconButton onClick={toggleTheme} sx={{ color: '#000' }}>
-              {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
-            </IconButton>
-            {authButtons}
-          </Box>
-        )}
+              {authButtons}
+              <IconButton onClick={handleMenuOpen}>
+                <Avatar
+                  alt={signin.userLoggedIn?.displayName || 'User'}
+                  src={signin.userLoggedIn?.photoURL || ''}
+                  sx={{ width: 30, height: 30 }}
+                />
+              </IconButton>
+              <Menu
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorEl={anchorEl} // Ensures menu opens at the correct position
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              >
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Avatar
+                    alt={signin.userLoggedIn?.displayName}
+                    src={signin.userLoggedIn?.photoURL || ''}
+                    sx={{ width: 100, height: 100, mb: 1 }}
+                  />
+                  <Typography variant="body1">
+                    {signin.userLoggedIn?.displayName || 'User Name'}
+                  </Typography>
+                  <Typography variant="body2">
+                    {signin.userLoggedIn?.email || 'Email'}
+                  </Typography>
+                  <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
+                    Signout
+                  </Button>
+                </Box>
+              </Menu>
+            </Box>
+          )}
+
+        </Box>
       </Toolbar>
     </AppBar>
   );
-});
+};
 
 const appBarStyles = {
   top: 0,
