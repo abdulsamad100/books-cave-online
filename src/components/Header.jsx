@@ -244,13 +244,16 @@ const Header = () => {
                 {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
               </IconButton>
               {authButtons}
-              <IconButton onClick={handleMenuOpen}>
-                <Avatar
-                  alt={signin.userLoggedIn?.displayName || 'User'}
-                  src={signin.userLoggedIn?.photoURL || ''}
-                  sx={{ width: 30, height: 30 }}
-                />
-              </IconButton>
+              {signin.userLoggedIn &&
+                <IconButton onClick={handleMenuOpen}>
+                  <Avatar
+                    alt={signin.userLoggedIn?.displayName || 'User'}
+                    src={signin.userLoggedIn?.photoURL || ''}
+                    sx={{ width: 30, height: 30 }}
+                  />
+                </IconButton>
+              }
+
               <Menu
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}

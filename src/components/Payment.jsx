@@ -4,6 +4,10 @@ import {
   where,
   orderBy,
   onSnapshot,
+  serverTimestamp,
+  doc,
+  setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import { useContext, useEffect, useState } from "react";
@@ -25,11 +29,13 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../context/ThemeContext";
+import toast from "react-hot-toast";
 
 const Payment = () => {
   const { signin } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
   const current_uid = signin?.userLoggedIn?.uid;
+
   const [AllCartItems, setAllCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -38,6 +44,7 @@ const Payment = () => {
 
   useEffect(() => {
     if (!current_uid) return;
+
     const unsubscribe = onSnapshot(
       query(
         collection(db, "Carts"),
@@ -48,8 +55,12 @@ const Payment = () => {
         setAllCartItems(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
         setLoading(false);
       },
-      () => setLoading(false)
+      (error) => {
+        console.error("Error fetching cart items:", error);
+        setLoading(false);
+      }
     );
+
     return () => unsubscribe();
   }, [current_uid]);
 
@@ -57,8 +68,9 @@ const Payment = () => {
     (sum, item) => sum + (item.productPrice || 0) * (item.quantity || 1),
     0
   );
+
   const handlePayNow = async () => {
-    if (isProcessing) return;
+    if (isProcessing || totalPrice === 0) return;
     setIsProcessing(true);
 
     if (parseFloat(enteredAmount) === totalPrice) {
@@ -68,7 +80,6 @@ const Payment = () => {
           cartItems: AllCartItems,
           totalPrice,
           paymentDate: serverTimestamp(),
-          buyer: current_uid,
         };
 
         const historyRef = doc(collection(db, "History"));
@@ -79,12 +90,12 @@ const Payment = () => {
         );
         await Promise.all(deletePromises);
 
-        toast.success("Payment Successful and Cart Items Removed!");
+        toast.success("Payment successful and cart cleared!");
         setModalOpen(false);
         setEnteredAmount("");
         setAllCartItems([]);
       } catch (error) {
-        console.error("Error saving payment to history:", error);
+        console.error("Error processing payment:", error);
         toast.error("Error processing payment.");
       } finally {
         setIsProcessing(false);
@@ -106,27 +117,30 @@ const Payment = () => {
           boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
         }}
       >
-        <Typography
-          variant="h4"
-          gutterBottom
-          sx={{ textAlign: "center", color: theme === "light" ? "#FFD700" : "#000", fontWeight: "bold" }}
-        >
+        <Typography variant="h4" gutterBottom sx={{ textAlign: "center", fontWeight: "bold" }}>
           Payment Receipt
         </Typography>
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh" }}>
-            <CircularProgress sx={{ color: theme === "light" ? "#FFD700" : "#000" }} />
+            <CircularProgress />
           </Box>
         ) : (
           <TableContainer
             component={Paper}
-            sx={{ bgcolor: theme === "light" ? "#2D3748" : "#f5f5f5", borderRadius: "10px" }}
+            sx={{
+              borderRadius: "10px",
+              color: theme === "light" ? "#000" : "#fff",
+              bgcolor: theme === "light" ? "#333" : "#fff",
+            }}
           >
             <Table>
               <TableHead>
                 <TableRow>
                   {["Item Name", "Quantity", "Price", "Subtotal"].map((heading) => (
-                    <TableCell key={heading} sx={{ color: theme === "light" ? "#fff" : "#000", fontWeight: "bold" }}>
+                    <TableCell
+                      key={heading}
+                      sx={{ fontWeight: "bold", color: theme === "light" ? "#fff" : "#000" }}
+                    >
                       {heading}
                     </TableCell>
                   ))}
@@ -135,18 +149,23 @@ const Payment = () => {
               <TableBody>
                 {AllCartItems.length ? (
                   AllCartItems.map(({ productName, quantity, productPrice }, index) => (
-                    <motion.tr key={index}>
-                      {[productName, quantity, `Rs.${productPrice}`, `Rs.${productPrice * quantity}`].map((value, idx) => (
+                    <TableRow key={index}>
+                      {[
+                        productName,
+                        quantity,
+                        `Rs.${productPrice}`,
+                        `Rs.${productPrice * quantity}`,
+                      ].map((value, idx) => (
                         <TableCell key={idx} sx={{ color: theme === "light" ? "#fff" : "#000" }}>
                           {value}
                         </TableCell>
                       ))}
-                    </motion.tr>
+                    </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} align="center" sx={{ color: theme === "light" ? "#fff" : "#000" }}>
-                      Add Items to Your Cart
+                    <TableCell colSpan={4} align="center">
+                      No items in your cart
                     </TableCell>
                   </TableRow>
                 )}
@@ -155,14 +174,17 @@ const Payment = () => {
           </TableContainer>
         )}
         {!loading && (
-          <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between", p: 2, bgcolor: theme === "light" ? "#2D3748" : "#fff", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0,0,0,0.2)" }}>
-            <Typography variant="h6" sx={{ color: theme === "light" ? "#fff" : "#000", fontWeight: "bold" }}>
-              Total: Rs.{totalPrice.toFixed(0)}
-            </Typography>
+          <Box sx={{ mt: 2, display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="h6">Total: Rs.{totalPrice.toFixed(0)}</Typography>
             <Button
               variant="contained"
-              sx={{ bgcolor: "#FFD700", color: "#000", "&:hover": { bgcolor: "#FFC300" } }}
               onClick={() => setModalOpen(true)}
+              disabled={totalPrice === 0 || isProcessing}
+              sx={{
+                bgcolor: "#FFD700",
+                "&:hover": { bgcolor: "#FFC107" },
+                color: "#333",
+              }}
             >
               Pay Now
             </Button>
@@ -170,20 +192,48 @@ const Payment = () => {
         )}
       </Box>
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", p: 3, bgcolor: theme === "light" ? "#333" : "#fff", borderRadius: "10px", boxShadow: "0px 4px 8px rgba(0,0,0,0.2)", textAlign: "center", color: theme === "light" ? "#fff" : "#000" }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>Enter Amount to Pay</Typography>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "90%",
+            maxWidth: 400,
+            p: 4,
+            bgcolor: theme === "dark" ? "#fff" : "#333",
+            color: theme === "dark" ? "#333" : "#fff",
+            borderRadius: "10px",
+            boxShadow: 24,
+          }}
+        >
+          <Typography variant="h6" sx={{ mb: 2, textAlign: "center" }}>
+            Enter Amount to Pay
+          </Typography>
           <TextField
             value={enteredAmount}
             onChange={(e) => setEnteredAmount(e.target.value)}
-            label="Amount"
             fullWidth
-            sx={{ mt: 2, mb: 3, input: { color: theme === "light" ? "#fff" : "#000" } }}
+            variant="outlined"
+            sx={{
+              mt: 2,
+              mb: 3,
+              input: {
+                color: theme === "dark" ? "#333" : "#fff",
+                bgcolor: theme === "dark" ? "#f9f9f9" : "#555",
+              },
+            }}
           />
           <Button
             variant="contained"
-            sx={{ bgcolor: "#FFD700", color: theme === "light" ? "#1A202C" : "#fff", "&:hover": { bgcolor: "#FFC300" } }}
             onClick={handlePayNow}
+            fullWidth
             disabled={isProcessing}
+            sx={{
+              bgcolor: "#FFD700",
+              "&:hover": { bgcolor: "#FFC107" },
+              color: "#333",
+            }}
           >
             {isProcessing ? "Processing..." : "Pay Now"}
           </Button>
