@@ -83,7 +83,8 @@ const SignupForm = () => {
     setButtonDisabled(true);
     const loadingToastId = toast.loading('Signing Up...');
     const { username, email, password } = formValues.current;
-
+    console.log(formValues.current);
+    
     if (!username || !email || !password) {
       toast.dismiss(loadingToastId);
       toast.error('Please fill in all fields');
@@ -139,7 +140,7 @@ const SignupForm = () => {
             />
           )}
 
-          {['Full Name', 'Email', 'Password'].map((label, index) => (
+          {['User Name', 'Email', 'Password'].map((label, index) => (
             <TextField
               key={index}
               {...styles.textField}

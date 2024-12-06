@@ -1,7 +1,19 @@
 import React, { useContext, useState, useCallback } from 'react';
 import {
-  AppBar, Toolbar, Typography, Button, IconButton, Avatar,
-  Menu, Drawer, List, ListItemButton, Box, ListItemText,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuItem,
+  Drawer,
+  List,
+  ListItemButton,
+  Box,
+  ListItemText,
+  Divider,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -18,7 +30,6 @@ import HistoryIcon from '@mui/icons-material/History';
 import AddIcon from '@mui/icons-material/Add';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-
 const Header = () => {
   const { signin } = useContext(AuthContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -27,8 +38,9 @@ const Header = () => {
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery('(max-width:750px)');
 
-  const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
-  const handleMenuClose = () => setAnchorEl(null);
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget); // Correctly set anchorEl
+  const handleMenuClose = () => setAnchorEl(null); // Close the menu
+  const isMenuOpen = Boolean(anchorEl); // Determine if the menu is open
 
   const Signout = useCallback(async () => {
     try {
@@ -38,7 +50,7 @@ const Header = () => {
     } catch (error) {
       toast.error(error.message);
     }
-  }, [handleMenuClose]);
+  }, []);
 
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && ['Tab', 'Shift'].includes(event.key)) return;
@@ -55,25 +67,50 @@ const Header = () => {
               alt="Book Logo"
               style={{ height: '40px', marginRight: '8px' }}
             />
-            Online Library
+            BooksCave
           </Typography>
         </Link>
         <Box>
           {isSmallScreen ? (
             <>
               {signin.userLoggedIn && (
-                <IconButton
-                  onClick={(e) => {
-                    handleMenuOpen(e);
-                    setDrawerOpen(false);
-                  }}
-                >
-                  <Avatar
-                    alt={signin.userLoggedIn?.displayName || 'User'}
-                    src={signin.userLoggedIn?.photoURL || ''}
-                    sx={{ width: 30, height: 30 }}
-                  />
-                </IconButton>
+                <>
+                  <IconButton
+                    onClick={handleMenuOpen} // Attach the event handler here
+                  >
+                    <Avatar
+                      alt={signin.userLoggedIn?.displayName || 'User'}
+                      src={signin.userLoggedIn?.photoURL || ''}
+                      sx={{ width: 30, height: 30 }}
+                    />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={isMenuOpen}
+                    onClose={handleMenuClose}
+                  >
+                    <div style={{ padding: '10px', textAlign: 'center' }}>
+                      <Avatar
+                        src={signin?.userLoggedIn?.photoURL || defaultProfilePic}
+                        alt={signin?.userLoggedIn?.displayName}
+                        sx={{ width: 60, height: 60, marginBottom: 10, margin: '0 auto' }}
+                      />
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 'bold' }}
+                      >
+                        {signin?.userLoggedIn?.displayName || "User"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'gray', marginBottom: 2 }}>
+                        {signin?.userLoggedIn?.email || "User Email"}
+                      </Typography>
+                    </div>
+
+                    <Divider />
+
+                    <MenuItem onClick={Signout} sx={{ textAlign: "center" }}>Logout</MenuItem>
+                  </Menu>
+                </>
               )}
 
               <IconButton onClick={toggleDrawer(true)} sx={{ color: '#000' }}>
@@ -193,13 +230,41 @@ const Header = () => {
                   <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
                     Signout
                   </Button>
-                  <IconButton onClick={handleMenuOpen}>
+                  <IconButton
+                    onClick={handleMenuOpen} // Attach the event handler here
+                  >
                     <Avatar
                       alt={signin.userLoggedIn?.displayName || 'User'}
                       src={signin.userLoggedIn?.photoURL || ''}
                       sx={{ width: 30, height: 30 }}
                     />
                   </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={isMenuOpen}
+                    onClose={handleMenuClose}
+                  >
+                    <div style={{ padding: '10px', textAlign: 'center' }}>
+                      <Avatar
+                        src={signin?.userLoggedIn?.photoURL || defaultProfilePic}
+                        alt={signin?.userLoggedIn?.displayName}
+                        sx={{ width: 60, height: 60, marginBottom: 10, margin: '0 auto' }}
+                      />
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 'bold' }}
+                      >
+                        {signin?.userLoggedIn?.displayName || "User"}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'gray', marginBottom: 2 }}>
+                        {signin?.userLoggedIn?.email || "User Email"}
+                      </Typography>
+                    </div>
+
+                    <Divider />
+
+                    <MenuItem onClick={Signout} sx={{ textAlign: "center" }}>Logout</MenuItem>
+                  </Menu>
                 </>
               ) : (
                 <>
@@ -223,8 +288,6 @@ const Header = () => {
   );
 };
 
-
-
 const appBarStyles = {
   top: 0,
   left: 0,
@@ -234,7 +297,6 @@ const appBarStyles = {
   color: '#000',
   boxShadow: 3,
   borderRadius: '0 0 16px 16px',
-  transition: 'background-color 0.3s ease, color 0.3s ease',
   justifyContent: 'center',
 };
 

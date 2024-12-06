@@ -123,7 +123,7 @@ const Dashboard = () => {
           }}
           required
           sx={{
-            width: "260px",
+            width: "250px",
             backgroundColor: theme === "dark" ? "#f9f9f9" : "#444",
             borderRadius: "8px",
             "& .MuiInputBase-input": { color: theme === "dark" ? "#000" : "#fff" },
