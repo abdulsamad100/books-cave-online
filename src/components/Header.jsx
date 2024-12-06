@@ -1,17 +1,7 @@
-import React, { useContext, useState, useCallback, useMemo } from 'react';
+import React, { useContext, useState, useCallback } from 'react';
 import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Avatar,
-  Menu,
-  Drawer,
-  List,
-  ListItemButton,
-  Box,
-  ListItemText,
+  AppBar, Toolbar, Typography, Button, IconButton, Avatar,
+  Menu, Drawer, List, ListItemButton, Box, ListItemText,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
@@ -24,13 +14,13 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuIcon from '@mui/icons-material/Menu';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import HistoryIcon from '@mui/icons-material/History';
-import { useCart } from '../context/CartContext';
+import AddIcon from '@mui/icons-material/Add';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 
 const Header = () => {
   const { signin } = useContext(AuthContext);
-  const { cartItemCount } = useCart();
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -55,63 +45,6 @@ const Header = () => {
     setDrawerOpen(open);
   };
 
-  const authButtons = useMemo(() => {
-    if (signin.userLoggedIn) {
-      return (
-        <>
-          {['/dashboard', '/add-new-book', '/mybooks'].map((path, index) => (
-            <Link to={path} key={index} style={{ textDecoration: 'none' }}>
-              <Button variant="outlined" sx={buttonStyles}>
-                {path === '/dashboard'
-                  ? 'Explore'
-                  : path === '/add-new-book'
-                    ? 'Add New Book'
-                    : 'My Books'}
-              </Button>
-            </Link>
-          ))}
-          <Menu
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          >
-            <Box sx={{ textAlign: 'center', p: 2 }}>
-              <Avatar
-                alt={signin.userLoggedIn?.displayName}
-                src={signin.userLoggedIn?.photoURL || ''}
-                sx={{ width: 100, height: 100, mb: 1 }}
-              />
-              <Typography variant="body1">
-                {signin.userLoggedIn?.displayName || 'User Name'}
-              </Typography>
-              <Typography variant="body2">
-                {signin.userLoggedIn?.email || 'Email'}
-              </Typography>
-              <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
-                Signout
-              </Button>
-            </Box>
-          </Menu>
-        </>
-      );
-    }
-    return (
-      <>
-        <Link to="/signup" style={{ textDecoration: 'none' }}>
-          <Button variant="outlined" sx={buttonStyles}>
-            Signup
-          </Button>
-        </Link>
-        <Link to="/login" style={{ textDecoration: 'none' }}>
-          <Button variant="outlined" sx={buttonStyles}>
-            Login
-          </Button>
-        </Link>
-      </>
-    );
-  }, [signin.userLoggedIn, anchorEl, handleMenuClose, Signout]);
-
   return (
     <AppBar position="absolute" sx={appBarStyles}>
       <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -128,11 +61,11 @@ const Header = () => {
         <Box>
           {isSmallScreen ? (
             <>
-              {signin.userLoggedIn ? (
+              {signin.userLoggedIn && (
                 <IconButton
                   onClick={(e) => {
-                    handleMenuOpen(e); // Open the profile menu
-                    setDrawerOpen(false); // Close the drawer when the profile icon is clicked
+                    handleMenuOpen(e);
+                    setDrawerOpen(false);
                   }}
                 >
                   <Avatar
@@ -141,7 +74,7 @@ const Header = () => {
                     sx={{ width: 30, height: 30 }}
                   />
                 </IconButton>
-              ) : null}
+              )}
 
               <IconButton onClick={toggleDrawer(true)} sx={{ color: '#000' }}>
                 <MenuIcon />
@@ -186,7 +119,24 @@ const Header = () => {
                     </Box>
                     {signin.userLoggedIn ? (
                       <>
-                        {authButtons}
+                        <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+                          <Button variant="outlined" sx={buttonStyles}>
+                            Explore
+                          </Button>
+                        </Link>
+                        <Link to="/add-new-book" style={{ textDecoration: 'none' }}>
+                          <Button variant="outlined" sx={buttonStyles}>
+                            <AddIcon />
+                          </Button>
+                        </Link>
+                        <Link to="/mybooks" style={{ textDecoration: 'none' }}>
+                          <Button variant="outlined" sx={buttonStyles}>
+                            My Books
+                          </Button>
+                        </Link>
+                        <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
+                          Signout
+                        </Button>
                       </>
                     ) : (
                       <>
@@ -201,41 +151,21 @@ const Header = () => {
                   </List>
                 </Box>
               </Drawer>
-
-              {/* Profile Menu */}
-              <Menu
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-                anchorEl={anchorEl} // Ensures the menu opens at the correct position
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              >
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Avatar
-                    alt={signin.userLoggedIn?.displayName}
-                    src={signin.userLoggedIn?.photoURL || ''}
-                    sx={{ width: 100, height: 100, mb: 1 }}
-                  />
-                  <Typography variant="body1">
-                    {signin.userLoggedIn?.displayName || 'User Name'}
-                  </Typography>
-                  <Typography variant="body2">
-                    {signin.userLoggedIn?.email || 'Email'}
-                  </Typography>
-                  <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
-                    Signout
-                  </Button>
-                </Box>
-              </Menu>
             </>
           ) : (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               {signin.userLoggedIn && (
                 <>
-                  <IconButton sx={{ color: '#000' }} onClick={() => navigate('/cart')}>
+                  <IconButton
+                    sx={{ color: '#000' }}
+                    onClick={() => navigate('/cart')}
+                  >
                     <ShoppingCartIcon />
                   </IconButton>
-                  <IconButton sx={{ color: '#000' }} onClick={() => navigate('/history')}>
+                  <IconButton
+                    sx={{ color: '#000' }}
+                    onClick={() => navigate('/history')}
+                  >
                     <HistoryIcon />
                   </IconButton>
                 </>
@@ -243,49 +173,57 @@ const Header = () => {
               <IconButton onClick={toggleTheme} sx={{ color: '#000' }}>
                 {theme === 'light' ? <Brightness4Icon /> : <BedtimeIcon />}
               </IconButton>
-              {authButtons}
-              {signin.userLoggedIn &&
-                <IconButton onClick={handleMenuOpen}>
-                  <Avatar
-                    alt={signin.userLoggedIn?.displayName || 'User'}
-                    src={signin.userLoggedIn?.photoURL || ''}
-                    sx={{ width: 30, height: 30 }}
-                  />
-                </IconButton>
-              }
-
-              <Menu
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-                anchorEl={anchorEl} // Ensures menu opens at the correct position
-                anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              >
-                <Box sx={{ textAlign: 'center', p: 2 }}>
-                  <Avatar
-                    alt={signin.userLoggedIn?.displayName}
-                    src={signin.userLoggedIn?.photoURL || ''}
-                    sx={{ width: 100, height: 100, mb: 1 }}
-                  />
-                  <Typography variant="body1">
-                    {signin.userLoggedIn?.displayName || 'User Name'}
-                  </Typography>
-                  <Typography variant="body2">
-                    {signin.userLoggedIn?.email || 'Email'}
-                  </Typography>
+              {signin.userLoggedIn ? (
+                <>
+                  <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+                    <Button variant="outlined" sx={buttonStyles}>
+                      Explore
+                    </Button>
+                  </Link>
+                  <Link to="/add-new-book" style={{ textDecoration: 'none' }}>
+                    <Button variant="outlined" sx={buttonStyles}>
+                      <AddIcon />
+                    </Button>
+                  </Link>
+                  <Link to="/mybooks" style={{ textDecoration: 'none' }}>
+                    <Button variant="outlined" sx={buttonStyles}>
+                      My Books
+                    </Button>
+                  </Link>
                   <Button variant="outlined" sx={buttonStyles} onClick={Signout}>
                     Signout
                   </Button>
-                </Box>
-              </Menu>
+                  <IconButton onClick={handleMenuOpen}>
+                    <Avatar
+                      alt={signin.userLoggedIn?.displayName || 'User'}
+                      src={signin.userLoggedIn?.photoURL || ''}
+                      sx={{ width: 30, height: 30 }}
+                    />
+                  </IconButton>
+                </>
+              ) : (
+                <>
+                  <Link to="/signup" style={{ textDecoration: 'none' }}>
+                    <Button variant="outlined" sx={buttonStyles}>
+                      Signup
+                    </Button>
+                  </Link>
+                  <Link to="/login" style={{ textDecoration: 'none' }}>
+                    <Button variant="outlined" sx={buttonStyles}>
+                      Login
+                    </Button>
+                  </Link>
+                </>
+              )}
             </Box>
           )}
-
         </Box>
       </Toolbar>
     </AppBar>
   );
 };
+
+
 
 const appBarStyles = {
   top: 0,

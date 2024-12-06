@@ -6,6 +6,7 @@ import { Box, Typography, CircularProgress, Grid, Card, CardContent, CardMedia }
 import { motion } from "framer-motion";
 import { ThemeContext } from "../context/ThemeContext";
 
+
 const History = () => {
   const { signin } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
@@ -13,6 +14,40 @@ const History = () => {
 
   const [historyItems, setHistoryItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const searchBar=()=>{
+    return(
+      <TextField
+      value={searchText}
+      onChange={handleInputChange}
+      placeholder="Search..."
+      variant="outlined"
+      fullWidth
+      sx={{ maxWidth: '500px' }}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <SearchIcon/>
+          </InputAdornment>
+        ),
+        endAdornment: (
+          searchText && (
+            <InputAdornment position="end">
+              <IconButton onClick={handleClear} size="small">
+                <ClearIcon />
+              </IconButton>
+            </InputAdornment>
+          )
+        ),
+      }}
+      onKeyPress={(e) => {
+        if (e.key === 'Enter') {
+          handleSearch();
+        }
+      }}
+    />
+    )
+  }
 
   useEffect(() => {
     if (!current_uid) return;
@@ -45,7 +80,7 @@ const History = () => {
             textAlign: "center",
             fontWeight: "bold",
             mb: 4,
-            color: theme === "light" ? "#333" : "#fff",
+            color: theme === "dark" ? "#333" : "#FFD700",
           }}
         >
           Purchase History
@@ -55,14 +90,14 @@ const History = () => {
             <CircularProgress />
           </Box>
         ) : historyItems.length ? (
-          <Grid container spacing={4}>
+          <>
             {historyItems.map((item) => (
-              <Grid item xs={12} sm={6} md={4} key={item.id}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: "20px", mt: 4, justifyContent: "center", alignItems: "center" }} key={item.id}>
                 <Card
                   sx={{
                     backgroundColor: theme === "light" ? "#f5f5f5" : "#1a1a1a",
                     color: theme === "light" ? "#333" : "#fff",
-                    width:"max-content"
+                    width: "max-content"
                   }}
                 >
                   <CardMedia
@@ -76,7 +111,7 @@ const History = () => {
                       {item.productName}
                     </Typography>
                     <Typography variant="body1">
-                      <strong>Quantity:</strong> {item.quantity}
+                      <strong>Quantity:</strong> {item?.cartItems[0]?.quantity}
                     </Typography>
                     <Typography variant="body1">
                       <strong>Price:</strong> Rs.{item.totalPrice.toFixed(0)}
@@ -87,9 +122,9 @@ const History = () => {
                     </Typography>
                   </CardContent>
                 </Card>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </>
         ) : (
           <Typography sx={{ textAlign: "center", mt: 4 }}>No purchase history found.</Typography>
         )}

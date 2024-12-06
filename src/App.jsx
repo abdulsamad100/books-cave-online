@@ -11,7 +11,6 @@ import Dashboard from './components/Dashboard';
 import IntroText from './components/IntroText';
 import AddNewBook from './components/AddNewBook';
 import MyBooks from './components/MyBooks';
-import { CartProvider } from './context/CartContext';
 import Cart from './components/Cart';
 import Payment from './components/Payment';
 import History from './components/History';
@@ -42,9 +41,7 @@ function App() {
 
     <AuthProvider>
       <ThemeProvider >
-        <CartProvider>
           <RouterProvider router={router} />
-        </CartProvider>
       </ThemeProvider>
     </AuthProvider>
   );
