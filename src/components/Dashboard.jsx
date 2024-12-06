@@ -7,99 +7,45 @@ import {
   IconButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { AuthContext } from "../context/AuthContext";
 import {
   collection,
   onSnapshot,
-  doc,
-  getDoc,
-  updateDoc,
-  serverTimestamp,
   orderBy,
   query,
-  addDoc,
   getDocs,
   where,
 } from "firebase/firestore";
+import NotFoundImg from "../assets/NotFound.png";
 import { db } from "../JS Files/Firebase";
 import Card from "./Card";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
 
 const Dashboard = () => {
-  const { signin, isLoading: authLoading } = useContext(AuthContext);
   const [firebaseData, setFirebaseData] = useState([]);
-  const [searchData, setSearchData] = useState([]);
-  const [isSearching, setisSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [processingItemId, setProcessingItemId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(""); // New state for search input
+  const [searchTerm, setSearchTerm] = useState("");
   const { theme } = useContext(ThemeContext);
+
   const txtColor = {
     color: theme === "light" ? "#fff" : "#000",
     transition: "0.5s",
   };
 
-  const navigate = useNavigate();
-
-  const addToCart = async (userId, item) => {
-    setProcessingItemId(item.id);
-    try {
-      const productRef = doc(db, "books", item.id);
-      const productSnapshot = await getDoc(productRef);
-
-      if (productSnapshot.exists()) {
-        const productData = productSnapshot.data();
-        const currentStock = productData.stock;
-
-        if (currentStock > 0) {
-          await updateDoc(productRef, {
-            stock: currentStock - 1,
-          });
-
-          const cartRef = collection(db, "Carts");
-          await addDoc(cartRef, {
-            createdFor: userId,
-            buyerName: signin?.userLoggedIn?.displayName,
-            productId: item?.id,
-            productName: item?.title,
-            productPrice: item?.price,
-            quantity: 1,
-            createdAt: serverTimestamp(),
-            photoURL: item?.photoURL,
-          });
-
-          toast.success("Item added to cart successfully");
-          navigate("/cart");
-        } else {
-          toast.error("Product Out of Stock");
-        }
-      } else {
-        console.error("Product not found! Please reload the page.");
-      }
-    } catch (error) {
-      toast.error("Error adding product to cart. Please try again.");
-      console.error("Error adding product to cart: ", error);
-    } finally {
-      setProcessingItemId(null);
-    }
-  };
-
   const handleSearch = async () => {
+
     if (!searchTerm.trim()) {
       toast.error("Please enter a search term.");
+      setIsSearching(false)
       return;
     }
 
-    setisSearching(true);
-    setIsLoading(true);
+    setIsSearching(true);
 
     try {
       const booksRef = collection(db, "books");
-
-      // Perform OR-like search
       const queries = [
         query(booksRef, where("author", "==", searchTerm)),
         query(booksRef, where("title", "==", searchTerm)),
@@ -116,19 +62,15 @@ const Dashboard = () => {
         })
       );
 
+      setFirebaseData(Array.from(results.values()));
       if (results.size > 0) {
-        setSearchData(Array.from(results.values()));
         toast.success(`${results.size} items found.`);
       } else {
-        setSearchData([]);
         toast.info("No matching items found.");
       }
     } catch (error) {
-      toast.error("Error searching for items. Please try again.");
+      toast.error("No Item Found");
       console.error("Error searching for items: ", error);
-    } finally {
-      setisSearching(false);
-      setIsLoading(false);
     }
   };
 
@@ -157,79 +99,67 @@ const Dashboard = () => {
     }
   }, [isSearching]);
 
-  if (authLoading || isLoading) {
-    return (
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", mt: "120px" }}>
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
-          height: "70vh",
+          justifyContent: "center",
+          marginBottom: "16px",
         }}
       >
-        <CircularProgress sx={{ color: "#fff" }} />
-      </Box>
-    );
-  }
-
-  return (
-    <>
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            marginBottom: "16px",
+        <TextField
+          label="Search"
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value)
+            if(e.target.value==""){
+              setIsSearching(false)
+            }
           }}
-        >
-          <TextField
-            label="Search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") handleSearch();
-            }}
-            required
-            sx={{
-              backgroundColor: theme === "dark" ? "#f9f9f9" : "#444",
-              borderRadius: "8px",
-              "& .MuiInputBase-input": { color: theme === "dark" ? "#000" : "#fff" },
-              "& .MuiInputLabel-root": { color: theme === "dark" ? "#666" : "#aaa" },
-            }}
-          >
-            <IconButton onClick={handleSearch}>
-              <SearchIcon sx={{ color: theme === "dark" ? "#000" : "#fff" }} />
-            </IconButton>
-          </TextField>
+          onKeyPress={(e) => {
+            if (e.key === "Enter") handleSearch();
+          }}
+          required
+          sx={{
+            width: "260px",
+            backgroundColor: theme === "dark" ? "#f9f9f9" : "#444",
+            borderRadius: "8px",
+            "& .MuiInputBase-input": { color: theme === "dark" ? "#000" : "#fff" },
+            "& .MuiInputLabel-root": { color: theme === "dark" ? "#666" : "#aaa" },
+          }}
+        />
+        <IconButton onClick={handleSearch}>
+          <SearchIcon sx={{ color: theme === "dark" ? "#000" : "#fff" }} />
+        </IconButton>
+      </Box>
+
+      {isLoading && (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: "40px" }}>
+          <CircularProgress sx={{ color: "#fff" }} />
         </Box>
+      )}
 
-        <Box sx={{ padding: "16px", mt:"-60px" }}>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{
-              transition: "0.5s",
-              color: theme === "light" ? "#FFD700" : "#000",
-              marginTop: "80px",
-              textAlign: "center",
-              fontWeight: "bold",
-            }}
-          >
-            Explore
-          </Typography>
-
-          {firebaseData.length === 0 ? (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "50vh",
-              }}
-            >
-              <Typography variant="h5" sx={{ ...txtColor }}>
-                All Books Are Sold. Please Come Again Later!
+      {!isLoading && (
+        <Box sx={{ padding: "16px", textAlign: "center" }}>
+          {firebaseData.length === 0 && isSearching ? (
+            <Box sx={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+              <img src={NotFoundImg} alt="404" width={"35%"} style={{ display: "block" }}
+                sx={{
+                  width: { xs: "0px", sm: "50px", md: "75px", lg: "100px", },
+                  display: {
+                    xs: "none", lg: "block",
+                  },
+                }} />
+              <Typography
+                variant="h5"
+                sx={{
+                  mt: "40px",
+                  ...txtColor,
+                }}
+              >
+                No items found for your search.
               </Typography>
             </Box>
           ) : (
@@ -264,14 +194,7 @@ const Dashboard = () => {
                       createdAt={item.createdAt}
                       createdBy={item.createdBy}
                       photoURL={item.photoURL ?? "https://via.placeholder.com/150"}
-                      onAddToCart={async (e) => {
-                        e.stopPropagation();
-                        if (processingItemId === item.id) return;
-                        const loadingToast = toast.loading("Adding to cart...");
-                        await addToCart(signin.userLoggedIn.uid, item);
-                        toast.dismiss(loadingToast);
-                      }}
-                      disabled={processingItemId === item.id}
+                      onAddToCart={() => { }}
                     />
                   </motion.div>
                 ) : null
@@ -279,8 +202,8 @@ const Dashboard = () => {
             </Box>
           )}
         </Box>
-      </Box>
-    </>
+      )}
+    </Box>
   );
 };
 
