@@ -217,7 +217,7 @@ const Card = ({ image, title, stock, details, price, author, category,
           <CardContent sx={{ textAlign: "start" }}>
             <Typography
               variant="h5"
-              sx={{ fontWeight: "bold", transition: "0.5s", color: colors.primary }}
+              sx={{ fontWeight: "bold", transition: "0.5s", color: colors.primary, height:"35px", overflow: "hidden" }}
               component="div"
               gutterBottom
             >
