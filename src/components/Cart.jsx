@@ -1,15 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-    Box,
-    Typography,
-    Button,
-    Card as MuiCard,
-    CardContent,
-    CardMedia,
-    CircularProgress,
-} from "@mui/material";
+import { Box, Typography, Button, Card as MuiCard, CardContent,
+    CardMedia, CircularProgress, } from "@mui/material";
 import { motion } from "framer-motion";
-import { collection, query, where, onSnapshot, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, deleteDoc,
+    doc, getDoc, updateDoc } from "firebase/firestore";
 import { auth, db } from "../JS Files/Firebase";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";

@@ -1,22 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
-  Box,
-  CircularProgress,
-  TextField,
-  Typography,
-  IconButton,
+  Box, CircularProgress, TextField,
+  Typography, IconButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-  getDocs,
-  where,
+  collection, onSnapshot, orderBy,
+  query, getDocs, where,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import NotFoundImg from "../assets/NotFound.png";
-import { db } from "../JS Files/Firebase";
+import { auth, db } from "../JS Files/Firebase";
 import Card from "./Card";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -32,6 +29,57 @@ const Dashboard = () => {
   const txtColor = {
     color: theme === "light" ? "#fff" : "#000",
     transition: "0.5s",
+  };
+
+  const addToCart = async (item) => {
+    const user = auth.currentUser;
+    toast.loading("Adding Item to Cart")
+    if (!user) {
+      toast.error("Please log in to add items to your cart.");
+      return;
+    }
+
+    try {
+      const cartRef = collection(db, "Carts");
+      const productRef = doc(db, "books", item.id);
+
+      const productSnapshot = await getDoc(productRef);
+
+      if (!productSnapshot.exists()) {
+        toast.error("The product no longer exists.");
+        return;
+      }
+
+      const productData = productSnapshot.data();
+
+      if (productData.stock <= 0) {
+        toast.error("The product is out of stock.");
+        return;
+      }
+
+      const cartItem = {
+        productId: item.id,
+        productName: item.title,
+        productPrice: item.price,
+        photoURL: item.photoURL || "https://via.placeholder.com/150",
+        quantity: 1,
+        createdFor: user.uid,
+        createdBy: user.email,
+        createdAt: new Date(),
+      };
+
+      await addDoc(cartRef, cartItem);
+
+      await updateDoc(productRef, {
+        stock: productData.stock - 1,
+      });
+      toast.dismiss()
+
+      toast.success("Item added to cart!");
+    } catch (error) {
+      console.error("Error adding item to cart:", error);
+      toast.error("Failed to add item to cart.");
+    }
   };
 
   const handleSearch = async () => {
@@ -114,7 +162,7 @@ const Dashboard = () => {
           value={searchTerm}
           onChange={(e) => {
             setSearchTerm(e.target.value)
-            if(e.target.value==""){
+            if (e.target.value == "") {
               setIsSearching(false)
             }
           }}
@@ -124,8 +172,7 @@ const Dashboard = () => {
           required
           sx={{
             width: "250px",
-            backgroundColor: theme === "dark" ? "#f9f9f9" : "#444",
-            borderRadius: "8px",
+            backgroundColor: theme === "dark" ? "#f9f9f9" : "#444", borderRadius: "8px",
             "& .MuiInputBase-input": { color: theme === "dark" ? "#000" : "#fff" },
             "& .MuiInputLabel-root": { color: theme === "dark" ? "#666" : "#aaa" },
           }}
@@ -174,8 +221,7 @@ const Dashboard = () => {
               {firebaseData.map((item, index) =>
                 item.stock > 0 ? (
                   <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 40 }}
+                    key={item.id} initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
                       delay: index * 0.2,
@@ -194,8 +240,12 @@ const Dashboard = () => {
                       createdAt={item.createdAt}
                       createdBy={item.createdBy}
                       photoURL={item.photoURL ?? "https://via.placeholder.com/150"}
-                      onAddToCart={() => { }}
+                      onAddToCart={(e) => {
+                        e.stopPropagation();
+                        addToCart(item);
+                      }}
                     />
+
                   </motion.div>
                 ) : null
               )}

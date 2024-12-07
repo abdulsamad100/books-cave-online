@@ -28,26 +28,15 @@ const ModalContent = styled(motion.div)(({ theme }) => ({
   overflow: "hidden",
 }));
 
-const Card = ({
-  image,
-  title,
-  stock,
-  details,
-  price,
-  author,
-  category,
-  createdAt,
-  photoURL,
-  onAddToCart,
-  cardid,
-  createdBy,
+const Card = ({ image, title, stock, details, price, author, category,
+  createdAt, photoURL, onAddToCart, cardid, createdBy,
 }) => {
+  const { theme } = useContext(ThemeContext);
   const [IsCardOpen, setIsCardOpen] = useState(false);
   const formattedDate = createdAt && createdAt.seconds
     ? new Date(createdAt.seconds * 1000).toLocaleDateString() : createdAt;
   const displayImage = photoURL || image || "https://via.placeholder.com/150";
 
-  const { theme } = useContext(ThemeContext);
   const buttonStyle = {
     color: "#000",
     backgroundColor: "#FFD700",
@@ -64,27 +53,18 @@ const Card = ({
       <AnimatePresence>
         {IsCardOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }} transition={{ duration: 0.4 }}
           >
             <Modal
               open={IsCardOpen}
               onClose={() => setIsCardOpen(false)}
-              BackdropProps={{
-                sx: {
-                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  // padding:"10px",
-                },
-              }}
+              BackdropProps={{ sx: { backgroundColor: "rgba(0, 0, 0, 0.5)", }, }}
               keepMounted
             >
               <ModalContent
-                layoutId={`card-${cardid}`}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
+                layoutId={`card-${cardid}`} initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 200, damping: 20 }}
                 sx={{
                   mt: "2%",
@@ -106,7 +86,13 @@ const Card = ({
                     zIndex: 1,
                   }}
                 >
-                  <CloseIcon sx={{ transition:"0.5s",color: colors.primary, mixBlendMode: "difference" }} />
+                  <CloseIcon
+                    sx={{
+                      color: colors.primary,
+                      filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.8))",
+                    }}
+                  />
+
                 </IconButton>
                 <Box
                   sx={{
@@ -143,7 +129,7 @@ const Card = ({
                       maxWidth: { xs: "100%", md: "60%" },
                     }}
                   >
-                    <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2, transition:"0.5s",color: colors.primary }}>
+                    <Typography variant="h5" sx={{ fontWeight: "bold", mb: 2, transition: "0.5s", color: colors.primary }}>
                       {title}
                     </Typography>
                     <Typography variant="body2" color={colors.primary}>
@@ -174,7 +160,7 @@ const Card = ({
                     mt: 2,
                   }}
                 >
-                  <Typography variant="h6" sx={{ fontWeight: "bold", transition:"0.5s",color: colors.primary }}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold", transition: "0.5s", color: colors.primary }}>
                     Rs. {price.toFixed(0)}
                   </Typography>
                   <Button
@@ -228,10 +214,10 @@ const Card = ({
               maskComposite: "exclude",
             }}
           />
-          <CardContent>
+          <CardContent sx={{ textAlign: "start" }}>
             <Typography
               variant="h5"
-              sx={{ fontWeight: "bold", transition:"0.5s",color: colors.primary }}
+              sx={{ fontWeight: "bold", transition: "0.5s", color: colors.primary }}
               component="div"
               gutterBottom
             >
@@ -282,7 +268,7 @@ const Card = ({
                 fontWeight: "bold",
                 mr: "10px",
                 fontSize: "18px",
-                transition:"0.5s",color: colors.primary
+                transition: "0.5s", color: colors.primary
               }}
             >
               Rs. {price.toFixed(0)}

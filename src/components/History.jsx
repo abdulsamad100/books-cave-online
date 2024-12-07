@@ -2,56 +2,20 @@ import { useEffect, useState, useContext } from "react";
 import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import { AuthContext } from "../context/AuthContext";
-import { Box, Typography, CircularProgress, Grid, Card, CardContent, CardMedia } from "@mui/material";
+import { Box, Typography, CircularProgress, Card, CardContent, CardMedia
+} from "@mui/material";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../context/ThemeContext";
 
-
 const History = () => {
+  const [historyItems, setHistoryItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { signin } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
   const current_uid = signin?.userLoggedIn?.uid;
 
-  const [historyItems, setHistoryItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const searchBar=()=>{
-    return(
-      <TextField
-      value={searchText}
-      onChange={handleInputChange}
-      placeholder="Search..."
-      variant="outlined"
-      fullWidth
-      sx={{ maxWidth: '500px' }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon/>
-          </InputAdornment>
-        ),
-        endAdornment: (
-          searchText && (
-            <InputAdornment position="end">
-              <IconButton onClick={handleClear} size="small">
-                <ClearIcon />
-              </IconButton>
-            </InputAdornment>
-          )
-        ),
-      }}
-      onKeyPress={(e) => {
-        if (e.key === 'Enter') {
-          handleSearch();
-        }
-      }}
-    />
-    )
-  }
-
   useEffect(() => {
     if (!current_uid) return;
-
     const unsubscribe = onSnapshot(
       query(
         collection(db, "History"),
@@ -63,11 +27,11 @@ const History = () => {
         setLoading(false);
       },
       (error) => {
+        toast.error("No Data Found Please Try Again");
         console.error("Error fetching history:", error);
         setLoading(false);
       }
     );
-
     return () => unsubscribe();
   }, [current_uid]);
 
@@ -77,16 +41,17 @@ const History = () => {
         <Typography
           variant="h4"
           sx={{
-            textAlign: "center",
-            fontWeight: "bold",
-            mb: 4,
+            textAlign: "center", fontWeight: "bold", mb: 4,
             color: theme === "dark" ? "#333" : "#FFD700",
           }}
         >
           Purchase History
         </Typography>
         {loading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50vh" }}>
+          <Box sx={{
+            display: "flex", justifyContent: "center",
+            alignItems: "center", height: "50vh"
+          }}>
             <CircularProgress />
           </Box>
         ) : historyItems.length ? (

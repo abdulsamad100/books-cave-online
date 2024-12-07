@@ -1,34 +1,26 @@
 import React, { useContext, useState, useCallback } from 'react';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Avatar,
-  Menu,
-  MenuItem,
-  Drawer,
-  List,
-  ListItemButton,
-  Box,
-  ListItemText,
-  Divider,
-} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+
+import {
+  AppBar, Toolbar, Typography, Button, IconButton, Avatar, Menu,
+  MenuItem, Drawer, List, ListItemButton, Box,  ListItemText, Divider,
+} from '@mui/material';
+
+import BookLogo from '../assets/Book-Logo.svg';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
-import { signOut } from 'firebase/auth';
 import { auth } from '../JS Files/Firebase';
+
 import toast from 'react-hot-toast';
-import BookLogo from '../assets/Book-Logo.svg';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuIcon from '@mui/icons-material/Menu';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
 import HistoryIcon from '@mui/icons-material/History';
 import AddIcon from '@mui/icons-material/Add';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 const Header = () => {
   const { signin } = useContext(AuthContext);
@@ -38,9 +30,9 @@ const Header = () => {
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery('(max-width:750px)');
 
-  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget); // Correctly set anchorEl
-  const handleMenuClose = () => setAnchorEl(null); // Close the menu
-  const isMenuOpen = Boolean(anchorEl); // Determine if the menu is open
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+  const isMenuOpen = Boolean(anchorEl);
 
   const Signout = useCallback(async () => {
     try {
@@ -76,7 +68,7 @@ const Header = () => {
               {signin.userLoggedIn && (
                 <>
                   <IconButton
-                    onClick={handleMenuOpen} // Attach the event handler here
+                    onClick={handleMenuOpen}
                   >
                     <Avatar
                       alt={signin.userLoggedIn?.displayName || 'User'}
@@ -231,7 +223,7 @@ const Header = () => {
                     Signout
                   </Button>
                   <IconButton
-                    onClick={handleMenuOpen} // Attach the event handler here
+                    onClick={handleMenuOpen}
                   >
                     <Avatar
                       alt={signin.userLoggedIn?.displayName || 'User'}
