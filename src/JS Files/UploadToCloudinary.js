@@ -1,6 +1,6 @@
 const uploadToCloudinary = async (imageFile) => {
-    const cloudName = 'drynfbrfz';
-    const uploadPreset = 'Online-Library'; 
+    const cloudName = import.meta.env.VITE_CD_cloudName;
+    const uploadPreset = import.meta.env.VITE_CD_uploadPreset; 
 
     const formData = new FormData();
     formData.append('file', imageFile);
