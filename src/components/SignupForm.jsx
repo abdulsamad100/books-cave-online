@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { ThemeContext } from '../context/ThemeContext';
 
-const defaultProfilePic = "https://ufrsante.uidt.sn/wp-content/uploads/2023/09/default-avatar-profile-icon-vector-social-media-user-photo-700-205577532.jpg";
+const defaultProfilePic = "https://static.vecteezy.com/system/resources/previews/027/708/418/large_2x/default-avatar-profile-icon-in-flat-style-free-vector.jpg";
 
 
 
@@ -84,7 +84,7 @@ const SignupForm = () => {
     const loadingToastId = toast.loading('Signing Up...');
     const { username, email, password } = formValues.current;
     console.log(formValues.current);
-    
+
     if (!username || !email || !password) {
       toast.dismiss(loadingToastId);
       toast.error('Please fill in all fields');
@@ -136,7 +136,7 @@ const SignupForm = () => {
             <img
               src={URL.createObjectURL(selectedImage)}
               alt="Selected"
-              style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '50%', margin: '10px auto',color:styles.subtitle.color }}
+              style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '50%', margin: '10px auto', color: styles.subtitle.color }}
             />
           )}
 

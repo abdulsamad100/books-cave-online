@@ -18,9 +18,9 @@ import History from './components/History';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
+      <Route path="dashboard" element={<Dashboard />} />
       <Route index element={<IntroText />} />
       <Route element={<AnotherChecker />}>
-        <Route path="dashboard" element={<Dashboard />} />
         <Route path="add-new-book" element={<AddNewBook />} />
         <Route path="history" element={<History />} />
         <Route path="mybooks" element={<MyBooks />} />
@@ -41,7 +41,7 @@ function App() {
 
     <AuthProvider>
       <ThemeProvider >
-          <RouterProvider router={router} />
+        <RouterProvider router={router} />
       </ThemeProvider>
     </AuthProvider>
   );

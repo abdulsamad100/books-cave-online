@@ -66,9 +66,9 @@ function IntroText() {
                     </Button>
                 </Link>
                 <Divider sx={styles.divider} />
-                <Link to="/signup" style={{ textDecoration: 'none' }}>
+                <Link to="/dashboard" style={{ textDecoration: 'none' }}>
                     <Button variant="contained" sx={styles.button}>
-                        Signup
+                        Home
                     </Button>
                 </Link>
             </Box>

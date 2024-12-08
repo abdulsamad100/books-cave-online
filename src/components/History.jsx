@@ -2,7 +2,8 @@ import { useEffect, useState, useContext } from "react";
 import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
 import { db } from "../JS Files/Firebase";
 import { AuthContext } from "../context/AuthContext";
-import { Box, Typography, CircularProgress, Card, CardContent, CardMedia
+import {
+  Box, Typography, CircularProgress, Card, CardContent, CardMedia
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { ThemeContext } from "../context/ThemeContext";
@@ -16,6 +17,7 @@ const History = () => {
 
   useEffect(() => {
     if (!current_uid) return;
+
     const unsubscribe = onSnapshot(
       query(
         collection(db, "History"),
@@ -41,57 +43,77 @@ const History = () => {
         <Typography
           variant="h4"
           sx={{
-            textAlign: "center", fontWeight: "bold", mb: 4,
+            textAlign: "center",
+            fontWeight: "bold",
+            mb: 4,
             color: theme === "dark" ? "#333" : "#FFD700",
           }}
         >
           Purchase History
         </Typography>
         {loading ? (
-          <Box sx={{
-            display: "flex", justifyContent: "center",
-            alignItems: "center", height: "50vh"
-          }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "50vh",
+            }}
+          >
             <CircularProgress />
           </Box>
         ) : historyItems.length ? (
-          <>
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "20px",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             {historyItems.map((item) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: "20px", mt: 4, justifyContent: "center", alignItems: "center" }} key={item.id}>
-                <Card
-                  sx={{
-                    backgroundColor: theme === "light" ? "#f5f5f5" : "#1a1a1a",
-                    color: theme === "light" ? "#333" : "#fff",
-                    width: "max-content"
-                  }}
-                >
+              <Card
+                key={item.id}
+                sx={{
+                  backgroundColor: theme === "light" ? "#f5f5f5" : "#1a1a1a",
+                  color: theme === "light" ? "#333" : "#fff",
+                  maxWidth: 300,
+                }}
+              >
+                {item.photoURL && (
                   <CardMedia
                     component="img"
                     height="140"
-                    image={item.cartItems[0].photoURL || "/placeholder.jpg"}
+                    image={item.photoURL}
                     alt={item.productName || "Product Image"}
                   />
-                  <CardContent>
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      {item.productName}
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>Quantity:</strong> {item?.cartItems[0]?.quantity}
-                    </Typography>
-                    <Typography variant="body1">
-                      <strong>Price:</strong> Rs.{item.totalPrice.toFixed(0)}
-                    </Typography>
-                    <Typography variant="body2" sx={{ mt: 2 }}>
-                      <strong>Payment Date:</strong>{" "}
-                      {item.paymentDate?.toDate().toLocaleDateString() || "Pending"}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Box>
+                )}
+                <CardContent>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    {item.productName}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Quantity:</strong> {item.quantity}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Price:</strong> Rs.{item.productPrice}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Subtotal:</strong> Rs.{item.subtotal}
+                  </Typography>
+                  <Typography variant="body2" sx={{ mt: 2 }}>
+                    <strong>Payment Date:</strong>{" "}
+                    {item.paymentDate?.toDate().toLocaleString() || "Pending"}
+                  </Typography>
+                </CardContent>
+              </Card>
             ))}
-          </>
+          </Box>
         ) : (
-          <Typography sx={{ textAlign: "center", mt: 4 }}>No purchase history found.</Typography>
+          <Typography sx={{ textAlign: "center", mt: 4 }}>
+            No purchase history found.
+          </Typography>
         )}
       </Box>
     </motion.div>

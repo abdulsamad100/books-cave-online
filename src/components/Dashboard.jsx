@@ -18,13 +18,17 @@ import Card from "./Card";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { ThemeContext } from "../context/ThemeContext";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const {sigin}=useContext(AuthContext)
   const [firebaseData, setFirebaseData] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const { theme } = useContext(ThemeContext);
+  const navigate=useNavigate();
 
   const txtColor = {
     color: theme === "light" ? "#fff" : "#000",
@@ -33,11 +37,12 @@ const Dashboard = () => {
 
   const addToCart = async (item) => {
     const user = auth.currentUser;
-    toast.loading("Adding Item to Cart")
     if (!user) {
       toast.error("Please log in to add items to your cart.");
+      navigate("/login")
       return;
     }
+    toast.loading("Adding Item to Cart")
 
     try {
       const cartRef = collection(db, "Carts");

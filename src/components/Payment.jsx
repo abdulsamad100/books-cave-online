@@ -72,25 +72,30 @@ const Payment = () => {
   const handlePayNow = async () => {
     if (isProcessing || totalPrice === 0) return;
     setIsProcessing(true);
-
+  
     if (parseFloat(enteredAmount) === totalPrice) {
       try {
-        const paymentDetails = {
-          userId: current_uid,
-          cartItems: AllCartItems,
-          totalPrice,
-          paymentDate: serverTimestamp(),
-        };
-
-        const historyRef = doc(collection(db, "History"));
-        await setDoc(historyRef, paymentDetails);
-
+        const paymentPromises = AllCartItems.map((item) => {
+          const historyRef = doc(collection(db, "History"));
+          return setDoc(historyRef, {
+            userId: current_uid,
+            productName: item.productName,
+            quantity: item.quantity,
+            productPrice: item.productPrice,
+            subtotal: item.productPrice * item.quantity,
+            photoURL: item.photoURL || "", // Assuming an image URL if available
+            paymentDate: serverTimestamp(),
+          });
+        });
+  
+        await Promise.all(paymentPromises);
+  
         const deletePromises = AllCartItems.map((item) =>
           deleteDoc(doc(db, "Carts", item.id))
         );
         await Promise.all(deletePromises);
-
-        toast.success("Payment successful and cart cleared!");
+  
+        toast.success("Payment successful! All items added to history.");
         setModalOpen(false);
         setEnteredAmount("");
         setAllCartItems([]);
@@ -104,7 +109,7 @@ const Payment = () => {
       toast.error("Entered amount does not match the total bill.");
       setIsProcessing(false);
     }
-  };
+  };  
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

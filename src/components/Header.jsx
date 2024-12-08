@@ -11,16 +11,15 @@ import BookLogo from '../assets/Book-Logo.svg';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 import { auth } from '../JS Files/Firebase';
-
 import toast from 'react-hot-toast';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import MenuIcon from '@mui/icons-material/Menu';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import BedtimeIcon from '@mui/icons-material/Bedtime';
 import HistoryIcon from '@mui/icons-material/History';
 import AddIcon from '@mui/icons-material/Add';
+
 
 const Header = () => {
   const { signin } = useContext(AuthContext);
@@ -29,11 +28,13 @@ const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery('(max-width:750px)');
-
+  
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
   const isMenuOpen = Boolean(anchorEl);
-
+  
+  const defaultProfilePic = "https://static.vecteezy.com/system/resources/previews/027/708/418/large_2x/default-avatar-profile-icon-in-flat-style-free-vector.jpg";
+  
   const Signout = useCallback(async () => {
     try {
       await signOut(auth);
