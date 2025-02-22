@@ -11,7 +11,7 @@ export const AuthContext = createContext({
 export const AuthProvider = ({ children }) => {
   const [signin, setSignin] = useState({ userLoggedIn: null });
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null); // For handling any errors during auth
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
