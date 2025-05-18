@@ -87,7 +87,9 @@ const Dashboard = () => {
     }
   };
 
-const handleSearch = async () => {
+const handleSearch = async (e) => {
+  if (e) e.preventDefault(); // prevent page refresh
+
   const trimmedSearch = searchTerm.trim();
 
   if (!trimmedSearch) {
@@ -101,10 +103,8 @@ const handleSearch = async () => {
   try {
     const booksRef = collection(db, "books");
 
-    // Run a broad fetch (all documents)
     const snapshot = await getDocs(booksRef);
 
-    // Filter client-side using includes() for partial matching
     const filteredResults = [];
     snapshot.forEach((doc) => {
       const data = doc.data();
@@ -135,7 +135,6 @@ const handleSearch = async () => {
     setIsSearching(false);
   }
 };
-
 
   useEffect(() => {
     if (!isSearching) {
@@ -182,7 +181,10 @@ const handleSearch = async () => {
             }
           }}
           onKeyPress={(e) => {
-            if (e.key === "Enter") handleSearch();
+           if (e.key === 'Enter') {
+              e.preventDefault();
+              handleSearch();
+              }
           }}
           required
           sx={{
