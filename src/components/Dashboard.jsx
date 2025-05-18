@@ -87,45 +87,55 @@ const Dashboard = () => {
     }
   };
 
-  const handleSearch = async () => {
+const handleSearch = async () => {
+  const trimmedSearch = searchTerm.trim();
 
-    if (!searchTerm.trim()) {
-      toast.error("Please enter a search term.");
-      setIsSearching(false)
-      return;
-    }
+  if (!trimmedSearch) {
+    toast.error("Please enter a search term.");
+    setIsSearching(false);
+    return;
+  }
 
-    setIsSearching(true);
+  setIsSearching(true);
 
-    try {
-      const booksRef = collection(db, "books");
-      const queries = [
-        query(booksRef, where("author", "==", searchTerm)),
-        query(booksRef, where("title", "==", searchTerm)),
-        query(booksRef, where("category", "==", searchTerm)),
-        query(booksRef, where("createdBy", "==", searchTerm)),
-      ];
+  try {
+    const booksRef = collection(db, "books");
 
-      const querySnapshots = await Promise.all(queries.map((q) => getDocs(q)));
-      const results = new Map();
+    // Run a broad fetch (all documents)
+    const snapshot = await getDocs(booksRef);
 
-      querySnapshots.forEach((snapshot) =>
-        snapshot.forEach((doc) => {
-          results.set(doc.id, { id: doc.id, ...doc.data() });
-        })
-      );
+    // Filter client-side using includes() for partial matching
+    const filteredResults = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const search = trimmedSearch.toLowerCase();
 
-      setFirebaseData(Array.from(results.values()));
-      if (results.size > 0) {
-        toast.success(`${results.size} items found.`);
-      } else {
-        toast.info("No matching items found.");
+      const matches =
+        data.title?.toLowerCase().includes(search) ||
+        data.author?.toLowerCase().includes(search) ||
+        data.category?.toLowerCase().includes(search) ||
+        data.createdBy?.toLowerCase().includes(search);
+
+      if (matches) {
+        filteredResults.push({ id: doc.id, ...data });
       }
-    } catch (error) {
-      toast.error("No Item Found");
-      console.error("Error searching for items: ", error);
+    });
+
+    setFirebaseData(filteredResults);
+
+    if (filteredResults.length > 0) {
+      toast.success(`${filteredResults.length} items found.`);
+    } else {
+      toast.info("No matching items found.");
     }
-  };
+  } catch (error) {
+    toast.error("Error while searching.");
+    console.error("Error searching for items:", error);
+  } finally {
+    setIsSearching(false);
+  }
+};
+
 
   useEffect(() => {
     if (!isSearching) {
