@@ -180,11 +180,11 @@ const handleSearch = async (e) => {
               setIsSearching(false)
             }
           }}
-          onKeyPress={(e) => {
-           if (e.key === 'Enter') {
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
               e.preventDefault();
-              handleSearch();
-              }
+              handleSearch(e);
+            }
           }}
           required
           sx={{
