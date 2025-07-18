@@ -1,7 +1,7 @@
 # 📚 Books Cave Online
 
-Books Cave Online is a web application for browsing, exploring, and discovering books online.  
-It provides a simple, user-friendly interface where users can view a collection of books categorized by genres, authors, or featured picks.  
+Books Cave Online is a web application for browsing, exploring, Buying, Selling, and discovering books online.  
+It provides a simple, user-friendly interface where users can view a collection of books categorized by genres, authors, or featured picks and Buy/Sell the books.  
 
 ## 🚀 Features
 
