@@ -13,7 +13,7 @@ It provides a simple, user-friendly interface where users can view a collection 
 ## 🛠️ Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript
-- **Other tools:** Bootstrap (for styling), FontAwesome (for icons)
+- **Other tools:** React MUI (for styling), FontAwesome (for icons), motionDiv (For Animations)
 
 ## 📂 Folder Structure
 
